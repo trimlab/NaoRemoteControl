@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Nao Remote Control</string>
+    <string name="action_save">Save</string>
+    <string name="action_load">Load</string>
+    <string name="action_execute">Execute</string>
+    <string name="action_joystick">Joystick</string>
+    <string name="action_settings">Settings</string>
+    <string name="label_ipaddress">IP Address</string>
+    <string name="label_progressspinner">Connecting...</string>
 </resources>

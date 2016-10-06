@@ -1,12 +1,25 @@
 package edu.mtu.naoremotecontrol;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -22,140 +35,147 @@ import com.aldebaran.qi.helper.proxies.ALTextToSpeech;
 
 public class MainActivity extends AppCompatActivity
 {
-    private Session session;
-    private ALTextToSpeech tts;
-    private ALRobotPosture posture;
-    private ALAnimatedSpeech animatedSpeech;
-    private ALAudioPlayer audioPlayer;
-    private ALAutonomousLife autonomousLife;
-    private ALMotion navigation;
+    private RemoteControlPagerAdapter adapter;
+    private ViewPager viewPager;
 
-
-    private String robotUrl = "141.219.123.186:9559";
-    private String robotSSHUsername = "nao";
-    private String robotSSHPassword = "";
-    private int soundID = -1;
-
-    private SharedPreferences preferences;
-
-    @Override
-    protected void onCreate(final Bundle savedInstanceState)
+    public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        preferences = getPreferences(MODE_PRIVATE);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.mainTabLayout);
 
-        connectionDialog();
+        if (toolbar != null)
+        {
+            setSupportActionBar(toolbar);
+        }
+
+        viewPager = (ViewPager) findViewById(R.id.mainViewPager);
+
+        adapter = new RemoteControlPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
+
+        showConnectionDialog();
     }
 
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-        try
-        {
-            if(session.isConnected())
-                autonomousLife.setState("solitary");
-        }
-        catch (CallError callError)
-        {
-            callError.printStackTrace();
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-
-        session.close();
-    }
-
-    private void connectionDialog()
+    private void showConnectionDialog()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        View v = getLayoutInflater().inflate(R.layout.dialog_pickip, null, false);
-        final EditText ipAddress = (EditText) v.findViewById(R.id.ipAddress);
-        final EditText sshUname = (EditText) v.findViewById(R.id.sshUsername);
-        final EditText sshPass = (EditText) v.findViewById(R.id.sshPassword);
-        final CheckBox savePassword = (CheckBox) v.findViewById(R.id.savePassword);
-        final CheckBox showPassword =  (CheckBox) v.findViewById(R.id.showPassword);
-
-        showPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-
-                if(isChecked)
-                {
-                    sshPass.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                    sshPass.setSelection(sshPass.length());
-                }
-                else
-                {
-                    sshPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    sshPass.setSelection(sshPass.length());
-                }
-            }
-        });
-
-        ipAddress.setText(robotUrl);
-        sshUname.setText(robotSSHUsername);
-
-        if(preferences.contains("savedPassword"))
-        {
-            sshPass.setText(preferences.getString("savedPassword", ""));
-            savePassword.setChecked(true);
-        }
-
+        LayoutInflater inflater = getLayoutInflater();
+        View v = inflater.inflate(R.layout.dialog_connection, null);
         builder.setView(v);
-        //builder.setCancelable(false);
+        builder.setTitle("Connect to Nao");
+        builder.setPositiveButton("CONNECT", null);
 
-        builder.setTitle("Connect to NAO");
-
-        builder.setPositiveButton("Connect", new DialogInterface.OnClickListener()
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener()
         {
+            private EditText ipAddress;
+            private View connectionDialogProgressContainer;
             @Override
-            public void onClick(DialogInterface dialog, int which)
+            public void onShow(DialogInterface dialog)
             {
+                ipAddress = (EditText) ((Dialog) dialog).findViewById(R.id.connectionDialogIpAddress);
+                connectionDialogProgressContainer = ((Dialog) dialog).findViewById(R.id.connectionDialogProgressContainer);
 
-                robotUrl = ipAddress.getText().toString();
-                robotSSHUsername = sshUname.getText().toString();
-                robotSSHPassword = sshPass.getText().toString();
-
-                if(savePassword.isChecked())
-                    preferences.edit().putString("savedPassword", robotSSHPassword).apply();
-                else
+                Button connect = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                connect.setOnClickListener(new View.OnClickListener()
                 {
-                    if(preferences.contains("savedPassword"))
-                        preferences.edit().remove("savedPassword").apply();
-                }
-
-                init();
+                    @Override
+                    public void onClick(View v)
+                    {
+                        ipAddress.setVisibility(View.GONE);
+                        connectionDialogProgressContainer.setVisibility(View.VISIBLE);
+                    }
+                });
             }
         });
 
-        builder.show();
+        dialog.show();
     }
 
-    private void init()
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
     {
+        getMenuInflater().inflate(R.menu.menu_remotecontrol, menu);
+        return true;
+    }
 
-        try
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
         {
-            session = new Session();
-            session.connect(robotUrl).get();
-            tts = new ALTextToSpeech(session);
-            posture = new ALRobotPosture(session);
-            animatedSpeech = new ALAnimatedSpeech(session);
-            audioPlayer = new ALAudioPlayer(session);
-            autonomousLife = new ALAutonomousLife(session);
-            navigation = new ALMotion(session);
+            case R.id.action_save:
+                break;
+
+            case R.id.action_load:
+                break;
+
+            case R.id.action_execute:
+                break;
+
+            case R.id.action_joystick:
+                break;
+
+            case R.id.action_settings:
+                break;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        catch(Exception e)
+
+        return true;
+    }
+
+    public class RemoteControlPagerAdapter extends FragmentPagerAdapter
+    {
+        public RemoteControlPagerAdapter(FragmentManager fm)
         {
-            e.printStackTrace();
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position)
+        {
+            Fragment ret = null;
+
+            if(position == 0)
+            {
+                ret = new RemoteControlFragment();
+            }
+            else if(position == 1)
+            {
+                ret = new SystemInfoFragment();
+            }
+
+            return ret;
+        }
+
+        @Override
+        public int getCount()
+        {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position)
+        {
+            CharSequence ret = null;
+
+            if(position == 0)
+            {
+                ret = "Remote Control";
+            }
+            else if(position == 1)
+            {
+                ret = "System Info";
+            }
+
+            return ret;
         }
     }
 }
