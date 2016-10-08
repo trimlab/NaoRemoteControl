@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,15 +80,23 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
             menu = new PopupMenu(getActivity(), scriptEditView.getChildAt(scriptEditView.getChildCount() - 1), Gravity.CENTER);
             menu.inflate(R.menu.menu_scriptpopup);
 
-            menu.setOnDismissListener(new PopupMenu.OnDismissListener()
+            menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
             {
                 @Override
-                public void onDismiss(PopupMenu menu)
+                public boolean onMenuItemClick(MenuItem item)
                 {
-                    menu.dismiss();
+                    switch (item.getItemId())
+                    {
+                        case R.id.scripttext:
+                            adapter.add("");
+                            break;
+
+                        case R.id.scriptbutton:
+                            break;
+                    }
+                    return false;
                 }
             });
-
             menu.show();
 
         }
