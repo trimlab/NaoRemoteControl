@@ -1,9 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
+              android:layout_marginTop="@dimen/activity_vertical_margin"
+              android:layout_marginBottom="@dimen/activity_vertical_margin"
+              android:layout_marginLeft="@dimen/activity_horizontal_margin"
+              android:layout_marginRight="@dimen/activity_horizontal_margin"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Remote"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/scriptEditView"
+        android:layout_margin="5dp"
+        android:background="@drawable/black_border"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"/>
+
+    <RadioGroup
+        android:id="@+id/manualAutomaticAnimation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <RadioButton
+            android:text="@string/label_manualanimation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <RadioButton
+            android:text="@string/label_automaticanimation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RadioGroup>
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/pauseScript"
+            style="?android:attr/buttonBarButtonStyle"
+            android:text="@string/label_pausescript"
+            android:enabled="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/runScript"
+            style="?android:attr/buttonBarButtonStyle"
+            android:text="@string/label_runscript"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/stopScript"
+            style="?android:attr/buttonBarButtonStyle"
+            android:text="@string/label_stopscript"
+            android:enabled="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+
 
 </LinearLayout>

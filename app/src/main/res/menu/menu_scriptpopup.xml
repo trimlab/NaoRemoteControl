@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/scripttext"
+        android:title="@string/script_action_text" />
+
+    <item
+        android:id="@+id/scriptbutton"
+        android:title="@string/script_action_button" />
+</menu>

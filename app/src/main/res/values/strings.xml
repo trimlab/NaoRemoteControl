@@ -6,5 +6,12 @@
     <string name="action_joystick">Joystick</string>
     <string name="action_settings">Settings</string>
     <string name="label_ipaddress">IP Address</string>
-    <string name="label_progressspinner">Connecting...</string>
+    <string name="label_progressspinner">Connecting&#8230;</string>
+    <string name="label_manualanimation">Manual Animation</string>
+    <string name="label_automaticanimation">Automatic Animation</string>
+    <string name="label_pausescript">Pause</string>
+    <string name="label_runscript">Run</string>
+    <string name="label_stopscript">Stop</string>
+    <string name="script_action_text">Text</string>
+    <string name="script_action_button">Action</string>
 </resources>
