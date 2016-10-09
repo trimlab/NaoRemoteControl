@@ -6,7 +6,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +31,6 @@ public class ActionDialogFragment extends DialogFragment
         viewPager = (ViewPager) v.findViewById(R.id.dialogActionViewPager);
         adapter = new ActionDialogPagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(adapter);
-
         tabLayout.setupWithViewPager(viewPager);
 
         return v;
@@ -40,8 +38,8 @@ public class ActionDialogFragment extends DialogFragment
 
     private class ActionDialogPagerAdapter extends FragmentPagerAdapter
     {
-        private final String[] FRAGMENT_TITLES = {"Pitch","Volume","Rate","Pose","Gesture"};
-        public ActionDialogPagerAdapter(FragmentManager fm)
+        private final String[] FRAGMENT_TITLES = {"Text","Pitch","Volume","Rate","Pose","Gesture"};
+        private ActionDialogPagerAdapter(FragmentManager fm)
         {
             super(fm);
         }
@@ -50,9 +48,11 @@ public class ActionDialogFragment extends DialogFragment
         public Fragment getItem(int position)
         {
             Fragment ret = null;
+            String prefix = "edu.mtu.naoremotecontrol.actiondialog.";
+            String suffix = "ActionDialogFragment";
             try
             {
-                ret = (Fragment) Class.forName(FRAGMENT_TITLES[position]+"DialogFragment").newInstance();
+                ret = (Fragment) Class.forName(prefix + FRAGMENT_TITLES[position] + suffix).newInstance();
             }
             catch (Exception e)
             {
@@ -65,7 +65,7 @@ public class ActionDialogFragment extends DialogFragment
         @Override
         public int getCount()
         {
-            return 6;
+            return FRAGMENT_TITLES.length;
         }
 
         @Override

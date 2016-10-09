@@ -1,16 +1,12 @@
 package edu.mtu.naoremotecontrol;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,7 +17,8 @@ import java.util.List;
 public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
     private List<String> script;
-    private final int BUTTON = 1, TEXT = 2, INVISIBLE = 3;
+    private final int BUTTON = 1, TEXT = 2, INSERT_BUTTON = 3;
+    private View.OnClickListener insertListener;
 
     public ScriptEditViewAdapter()
     {
@@ -29,42 +26,9 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         script.add("");
     }
 
-    private class EditTextHolder extends RecyclerView.ViewHolder
+    public void setInsertListener(View.OnClickListener listener)
     {
-        public EditText view;
-        private int index;
-
-        public EditTextHolder(EditText itemView)
-        {
-            super(itemView);
-
-            view = itemView;
-            view.addTextChangedListener(new TextWatcher()
-            {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after)
-                {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count)
-                {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s)
-                {
-                    script.set(index, s.toString());
-                }
-            });
-        }
-
-        public void setIndex(int index)
-        {
-            this.index = index;
-        }
+        insertListener = listener;
     }
 
     private class ButtonViewHolder extends RecyclerView.ViewHolder implements Button.OnClickListener
@@ -72,12 +36,14 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         public Button view;
         private String text;
         private int index;
+        private boolean isInsert;
 
-        public ButtonViewHolder(Button itemView)
+        public ButtonViewHolder(Button itemView, boolean isInsert)
         {
             super(itemView);
 
             view = itemView;
+            this.isInsert = isInsert;
         }
 
         public void setIndex(int index)
@@ -85,21 +51,16 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             this.index = index;
         }
 
+        public boolean isInsertButton()
+        {
+            return isInsert;
+        }
+
         @Override
         public void onClick(View v)
         {
             //TODO open dialog
             Toast.makeText(v.getContext(), "Button!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public static class InvisibleInsertViewHolder extends RecyclerView.ViewHolder
-    {
-        public View v;
-        public InvisibleInsertViewHolder(View itemView)
-        {
-            super(itemView);
-            v = itemView;
         }
     }
 
@@ -112,30 +73,30 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
 
         if(position == script.size()-1)
-            return INVISIBLE;
+            return INSERT_BUTTON;
 
         return TEXT;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType)
     {
         switch(viewType)
         {
             case BUTTON:
                 Button b = new Button(parent.getContext());
                 b.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                return new ButtonViewHolder(b);
+                return new ButtonViewHolder(b, false);
 
-            case TEXT:
-                EditText t = new EditText(parent.getContext());
-                t.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                return new EditTextHolder(t);
+            case INSERT_BUTTON:
+                Button insert = new Button(parent.getContext());
+                insert.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                insert.setText("+");
 
-            case INVISIBLE:
-                LinearLayout v = new LinearLayout(parent.getContext());
-                v.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                return new InvisibleInsertViewHolder(v);
+                if(insertListener != null)
+                    insert.setOnClickListener(insertListener);
+
+                return new ButtonViewHolder(insert, true);
         }
         return null;
     }
@@ -143,21 +104,15 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
     {
-        if(holder instanceof EditTextHolder)
-        {
-            EditTextHolder editTextHolder = (EditTextHolder) holder;
-            editTextHolder.setIndex(position);
-            editTextHolder.view.setText(script.get(position));
-        }
-        else if(holder instanceof ButtonViewHolder)
+        if(holder instanceof ButtonViewHolder)
         {
             ButtonViewHolder buttonViewHolder = (ButtonViewHolder) holder;
             buttonViewHolder.setIndex(position);
-            buttonViewHolder.view.setText(script.get(position));
-        }
-        else if(holder instanceof InvisibleInsertViewHolder)
-        {
 
+            if(!buttonViewHolder.isInsertButton())
+            {
+                buttonViewHolder.view.setText(script.get(position));
+            }
         }
     }
 
@@ -169,12 +124,12 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public void add(String item)
     {
-        script.add(script.size()-2, item);
-        notifyDataSetChanged();
+        script.add(script.size()-1, item);
+        notifyItemInserted(script.size()-1);
     }
 
     public void addAll(List<String> items)
     {
-        script.addAll(script.size()-2, items);
+        script.addAll(script.size()-1, items);
     }
 }

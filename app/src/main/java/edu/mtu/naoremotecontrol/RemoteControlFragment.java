@@ -1,33 +1,26 @@
 package edu.mtu.naoremotecontrol;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import edu.mtu.naoremotecontrol.actiondialog.ActionDialogFragment;
 
 /**
  * Created by EricMVasey on 10/6/2016.
  */
 
-public class RemoteControlFragment extends Fragment implements RadioGroup.OnCheckedChangeListener, View.OnTouchListener
+public class RemoteControlFragment extends Fragment implements RadioGroup.OnCheckedChangeListener
 {
     private RecyclerView scriptEditView;
     private GestureDetector gestureDetector;
     private ScriptEditViewAdapter adapter;
-    private PopupMenu menu;
     private boolean isMenuVisible = false;
 
     @Override
@@ -41,11 +34,10 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
 
         scriptEditView = (RecyclerView) v.findViewById(R.id.scriptEditView);
         scriptEditView.setLayoutManager(new LinearLayoutManager(container.getContext()));
-        adapter = new ScriptEditViewAdapter();
-        scriptEditView.setAdapter(adapter);
 
-        scriptEditView.setOnTouchListener(this);
-        gestureDetector = new GestureDetector(getActivity(), new RecyclerViewGestureDetector());
+        adapter = new ScriptEditViewAdapter();
+        adapter.setInsertListener(insertListener);
+        scriptEditView.setAdapter(adapter);
 
         return v;
     }
@@ -56,85 +48,13 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
 
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event)
+    private View.OnClickListener insertListener = new View.OnClickListener()
     {
-        if (v.getId() == R.id.scriptEditView)
-        {
-            return gestureDetector.onTouchEvent(event);
-        }
-
-        return false;
-    }
-
-    private class RecyclerViewGestureDetector extends GestureDetector.SimpleOnGestureListener
-    {
-        public boolean onSingleTapUp(MotionEvent e)
-        {
-            return false;
-        }
-
-        public void onLongPress(MotionEvent e)
-        {
-            Log.d("LongPress","Detected");
-            menu = new PopupMenu(getActivity(), scriptEditView.getChildAt(scriptEditView.getChildCount() - 1), Gravity.CENTER);
-            menu.inflate(R.menu.menu_scriptpopup);
-
-            menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
-            {
-                @Override
-                public boolean onMenuItemClick(MenuItem item)
-                {
-                    switch (item.getItemId())
-                    {
-                        case R.id.scripttext:
-                            adapter.add("");
-                            break;
-
-                        case R.id.scriptbutton:
-                            break;
-                    }
-                    return false;
-                }
-            });
-            menu.show();
-
-        }
-
-        public boolean onDoubleTap(MotionEvent e)
-        {
-            return false;
-        }
-
-        public boolean onDoubleTapEvent(MotionEvent e)
-        {
-            return false;
-        }
-
-        public boolean onSingleTapConfirmed(MotionEvent e)
-        {
-            return false;
-        }
-
-        public void onShowPress(MotionEvent e)
-        {
-
-        }
-
-        public boolean onDown(MotionEvent e)
-        {
-            return true;
-        }
-
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, final float distanceX, float distanceY)
-        {
-            return super.onScroll(e1, e2, distanceX, distanceY);
-        }
-
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
+        public void onClick(View v)
         {
-            return super.onFling(e1, e2, velocityX, velocityY);
+            ActionDialogFragment dialog = new ActionDialogFragment();
+            dialog.show(getChildFragmentManager(), "insert_dialog");
         }
-    }
+    };
 }

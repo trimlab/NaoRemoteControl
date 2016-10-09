@@ -2,44 +2,21 @@ package edu.mtu.naoremotecontrol;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.PopupWindow;
-import android.widget.RadioGroup;
-import android.widget.Toast;
-
-import com.aldebaran.qi.CallError;
-import com.aldebaran.qi.Session;
-import com.aldebaran.qi.helper.proxies.ALAnimatedSpeech;
-import com.aldebaran.qi.helper.proxies.ALAudioPlayer;
-import com.aldebaran.qi.helper.proxies.ALAutonomousLife;
-import com.aldebaran.qi.helper.proxies.ALMotion;
-import com.aldebaran.qi.helper.proxies.ALRobotPosture;
-import com.aldebaran.qi.helper.proxies.ALTextToSpeech;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -139,9 +116,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public class RemoteControlPagerAdapter extends FragmentPagerAdapter
+    private class RemoteControlPagerAdapter extends FragmentPagerAdapter
     {
-        public RemoteControlPagerAdapter(FragmentManager fm)
+        private RemoteControlPagerAdapter(FragmentManager fm)
         {
             super(fm);
         }
