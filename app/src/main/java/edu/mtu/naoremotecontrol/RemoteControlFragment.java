@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +11,10 @@ import android.widget.RadioGroup;
 
 import edu.mtu.naoremotecontrol.actiondialog.ActionDialogFragment;
 
-/**
- * Created by EricMVasey on 10/6/2016.
- */
-
 public class RemoteControlFragment extends Fragment implements RadioGroup.OnCheckedChangeListener
 {
     private RecyclerView scriptEditView;
-    private GestureDetector gestureDetector;
     private ScriptEditViewAdapter adapter;
-    private boolean isMenuVisible = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle)

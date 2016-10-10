@@ -10,10 +10,6 @@ import android.widget.Toast;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by EricMVasey on 10/6/2016.
- */
-
 public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
     private List<String> script;

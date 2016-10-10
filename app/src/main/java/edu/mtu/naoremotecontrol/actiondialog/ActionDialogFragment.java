@@ -13,10 +13,6 @@ import android.view.ViewGroup;
 
 import edu.mtu.naoremotecontrol.R;
 
-/**
- * Created by EricMVasey on 10/8/2016.
- */
-
 public class ActionDialogFragment extends DialogFragment
 {
     private ViewPager viewPager;
@@ -48,15 +44,27 @@ public class ActionDialogFragment extends DialogFragment
         public Fragment getItem(int position)
         {
             Fragment ret = null;
-            String prefix = "edu.mtu.naoremotecontrol.actiondialog.";
-            String suffix = "ActionDialogFragment";
-            try
+
+            switch(position)
             {
-                ret = (Fragment) Class.forName(prefix + FRAGMENT_TITLES[position] + suffix).newInstance();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
+                case 0:
+                    ret = new TextActionDialogFragment();
+                    break;
+                case 1:
+                    ret = new PitchActionDialogFragment();
+                    break;
+                case 2:
+                    ret = new VolumeActionDialogFragment();
+                    break;
+                case 3:
+                    ret = new RateActionDialogFragment();
+                    break;
+                case 4:
+                    ret = new PoseActionDialogFragment();
+                    break;
+                case 5:
+                    ret = new GestureActionDialogFragment();
+                    break;
             }
 
             return ret;

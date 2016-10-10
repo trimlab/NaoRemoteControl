@@ -8,15 +8,11 @@ import android.view.ViewGroup;
 
 import edu.mtu.naoremotecontrol.R;
 
-/**
- * Created by EricMVasey on 10/9/2016.
- */
-
 public class TextActionDialogFragment extends Fragment
 {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View v = inflater.inflate(R.layout.dialog_fragment_add_action_text, container);
+        View v = inflater.inflate(R.layout.dialog_fragment_add_action_text, null);
         return v;
     }
 }
