@@ -13,7 +13,7 @@ import java.util.List;
 public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
     private List<String> script;
-    private final int BUTTON = 1, TEXT = 2, INSERT_BUTTON = 3;
+    private final int BUTTON = 1, INSERT_BUTTON = 2;
     private View.OnClickListener insertListener;
 
     public ScriptEditViewAdapter()
@@ -55,7 +55,6 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         @Override
         public void onClick(View v)
         {
-            //TODO open dialog
             Toast.makeText(v.getContext(), "Button!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -63,15 +62,10 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public int getItemViewType(int position)
     {
-        if(script.get(position).startsWith("BUTTON:"))
-        {
-            return BUTTON;
-        }
-
         if(position == script.size()-1)
             return INSERT_BUTTON;
 
-        return TEXT;
+        return BUTTON;
     }
 
     @Override

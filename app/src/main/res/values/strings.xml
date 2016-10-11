@@ -14,4 +14,12 @@
     <string name="label_stopscript">Stop</string>
     <string name="script_action_text">Text</string>
     <string name="script_action_button">Action</string>
+    <string name="action_dialog_pitch_label">Pitch</string>
+    <string name="action_dialog_pose_label">Pose</string>
+    <string name="action_dialog_posespeed_label">Speed</string>
+    <string name="action_dialog_gesture_label">Gesture</string>
+    <string name="action_dialog_gesturespeed_label">Speed</string>
+    <string name="action_dialog_rate_label">Speech Rate</string>
+    <string name="action_dialog_text_label">Text to Say</string>
+    <string name="action_dialog_volume_label">Volume</string>
 </resources>

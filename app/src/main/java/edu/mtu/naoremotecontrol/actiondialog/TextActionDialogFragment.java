@@ -12,7 +12,7 @@ public class TextActionDialogFragment extends Fragment
 {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View v = inflater.inflate(R.layout.dialog_fragment_add_action_text, null);
+        View v = inflater.inflate(R.layout.dialog_fragment_add_action_text, container, false);
         return v;
     }
 }

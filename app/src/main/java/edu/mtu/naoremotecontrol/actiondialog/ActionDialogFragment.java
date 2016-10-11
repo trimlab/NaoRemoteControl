@@ -1,5 +1,9 @@
 package edu.mtu.naoremotecontrol.actiondialog;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
@@ -7,9 +11,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import edu.mtu.naoremotecontrol.R;
 
@@ -17,57 +23,65 @@ public class ActionDialogFragment extends DialogFragment
 {
     private ViewPager viewPager;
     private ActionDialogPagerAdapter adapter;
+    public static final int TYPE_CREATE = 0, TYPE_EDIT = 1;
 
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View v = inflater.inflate(R.layout.dialog_add_action, container);
+        View v = getActivity().getLayoutInflater().inflate(R.layout.dialog_add_action, null);
 
         TabLayout tabLayout = (TabLayout) v.findViewById(R.id.dialogActionTabLayout);
-        viewPager = (ViewPager) v.findViewById(R.id.dialogActionViewPager);
-        adapter = new ActionDialogPagerAdapter(getChildFragmentManager());
+        viewPager = (DialogViewPager) v.findViewById(R.id.dialogActionViewPager);
+
+        adapter = new ActionDialogPagerAdapter(getChildFragmentManager(),
+                new Fragment[]{ new TextActionDialogFragment(),
+                        new PitchActionDialogFragment(),
+                        new VolumeActionDialogFragment(),
+                        new RateActionDialogFragment(),
+                        new PoseActionDialogFragment(),
+                        new GestureActionDialogFragment()});
+
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(6);
         tabLayout.setupWithViewPager(viewPager);
+
+        Button positive = (Button) v.findViewById(R.id.dialogActionPositiveButton);
+        Button negative = (Button) v.findViewById(R.id.dialogActionNegativeButton);
+
+        positive.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                dismiss();
+            }
+        });
+
+        negative.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                dismiss();
+            }
+        });
 
         return v;
     }
 
-    private class ActionDialogPagerAdapter extends FragmentPagerAdapter
+    private static class ActionDialogPagerAdapter extends FragmentPagerAdapter
     {
         private final String[] FRAGMENT_TITLES = {"Text","Pitch","Volume","Rate","Pose","Gesture"};
-        private ActionDialogPagerAdapter(FragmentManager fm)
+        private Fragment[] fragments;
+        private ActionDialogPagerAdapter(FragmentManager fm, Fragment[] fragments)
         {
             super(fm);
+            this.fragments = fragments;
         }
 
         @Override
         public Fragment getItem(int position)
         {
-            Fragment ret = null;
-
-            switch(position)
-            {
-                case 0:
-                    ret = new TextActionDialogFragment();
-                    break;
-                case 1:
-                    ret = new PitchActionDialogFragment();
-                    break;
-                case 2:
-                    ret = new VolumeActionDialogFragment();
-                    break;
-                case 3:
-                    ret = new RateActionDialogFragment();
-                    break;
-                case 4:
-                    ret = new PoseActionDialogFragment();
-                    break;
-                case 5:
-                    ret = new GestureActionDialogFragment();
-                    break;
-            }
-
-            return ret;
+            return fragments[position];
         }
 
         @Override
