@@ -5,6 +5,11 @@
         android:id="@+id/action_save"
         android:title="@string/action_save"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_save_as"
+        android:title="@string/action_save_as"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_load"
         android:title="@string/action_load"

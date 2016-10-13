@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Nao Remote Control</string>
     <string name="action_save">Save</string>
+    <string name="action_save_as">Save As</string>
     <string name="action_load">Load</string>
     <string name="action_execute">Execute</string>
     <string name="action_joystick">Joystick</string>
@@ -22,4 +23,10 @@
     <string name="action_dialog_rate_label">Speech Rate</string>
     <string name="action_dialog_text_label">Text to Say</string>
     <string name="action_dialog_volume_label">Volume</string>
+    <string name="settings_contact_title">Contact</string>
+    <string name="settings_about_title">About</string>
+    <string name="settings_global_volume_title">Global Volume</string>
+    <string name="settings_global_speed_title">Global Speed</string>
+    <string name="settings_misc_title">Miscellaneous</string>
+    <string name="settings_global_title">Global Robot Settings</string>
 </resources>

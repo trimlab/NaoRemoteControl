@@ -2,6 +2,7 @@ package edu.mtu.naoremotecontrol;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -97,6 +98,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_save:
                 break;
 
+            case R.id.action_save_as:
+                break;
+
             case R.id.action_load:
                 break;
 
@@ -107,6 +111,8 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.action_settings:
+                Intent i = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(i);
                 break;
 
             default:

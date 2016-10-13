@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory
+        android:title="@string/settings_global_title">
+
+        <edu.mtu.naoremotecontrol.SeekBarDialogPreference
+            android:key="settings_global_volume"
+            android:title="@string/settings_global_volume_title" />
+
+        <edu.mtu.naoremotecontrol.SeekBarDialogPreference
+            android:key="settings_global_speed"
+            android:title="@string/settings_global_speed_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_misc_title">
+
+        <Preference
+            android:key="settings_contact"
+            android:title="@string/settings_contact_title" />
+
+        <Preference
+            android:key="settings_about"
+            android:title="@string/settings_about_title" />
+
+    </PreferenceCategory>
 </PreferenceScreen>
