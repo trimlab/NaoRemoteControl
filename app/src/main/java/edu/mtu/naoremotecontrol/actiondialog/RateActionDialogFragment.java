@@ -1,7 +1,6 @@
 package edu.mtu.naoremotecontrol.actiondialog;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,7 @@ import android.widget.TextView;
 
 import edu.mtu.naoremotecontrol.R;
 
-public class RateActionDialogFragment extends Fragment
+public class RateActionDialogFragment extends ActionDialogChildFragment
 {
     private SeekBar rateLevel;
     private TextView rateLevelView;
@@ -45,5 +44,15 @@ public class RateActionDialogFragment extends Fragment
         });
 
         return v;
+    }
+
+    @Override
+    public String getData()
+    {
+        StringBuilder ret = new StringBuilder();
+        ret.append("Rate: ");
+        ret.append(rateLevelView.getText());
+
+        return ret.toString();
     }
 }

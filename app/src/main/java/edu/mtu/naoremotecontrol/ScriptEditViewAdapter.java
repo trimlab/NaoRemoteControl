@@ -118,6 +118,12 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         notifyItemInserted(script.size()-1);
     }
 
+    public void update(String item, int index)
+    {
+        script.set(index, item);
+        notifyItemChanged(index);
+    }
+
     public void addAll(List<String> items)
     {
         script.addAll(script.size()-1, items);

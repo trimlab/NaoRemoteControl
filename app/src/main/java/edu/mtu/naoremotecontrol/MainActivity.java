@@ -16,8 +16,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -93,26 +95,101 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View v;
         switch (item.getItemId())
         {
             case R.id.action_save:
-                break;
+                builder.setTitle("Save");
+                v = getLayoutInflater().inflate(R.layout.dialog_save, null);
+                final EditText fileNameField = (EditText) v.findViewById(R.id.dialog_save_filename);
+                builder.setView(v);
+                builder.setPositiveButton("Save", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        dialog.dismiss();
+                    }
+                });
 
-            case R.id.action_save_as:
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.show();
                 break;
 
             case R.id.action_load:
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("file/*");
+                startActivityForResult(intent, 450);
                 break;
 
             case R.id.action_execute:
+                builder.setTitle("Execute");
+                v = getLayoutInflater().inflate(R.layout.dialog_execute, null);
+                builder.setView(v);
+                builder.setPositiveButton("Run", null);
+
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+
+                dialog.setOnShowListener(new DialogInterface.OnShowListener()
+                {
+                    private Spinner programList;
+                    private View container;
+                    @Override
+                    public void onShow(DialogInterface dialog)
+                    {
+                        programList = (Spinner) ((Dialog) dialog).findViewById(R.id.dialog_program_spinner);
+                        container = ((Dialog) dialog).findViewById(R.id.executeDialogProgressContainer);
+
+                        ArrayAdapter<String> programs = new ArrayAdapter<String>(MainActivity.this,
+                                android.R.layout.simple_spinner_dropdown_item,
+                                new String[]{"Tai-Chi", "Custom1"});
+
+                        programList.setAdapter(programs);
+
+                        Button run = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+
+                        run.setOnClickListener(new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View v)
+                            {
+                                v.setEnabled(false);
+                                programList.setVisibility(View.GONE);
+                                container.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+                });
+
+                dialog.show();
                 break;
 
             case R.id.action_joystick:
+                Intent joystick = new Intent(MainActivity.this, JoystickActivity.class);
+                startActivity(joystick);
                 break;
 
             case R.id.action_settings:
-                Intent i = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(i);
+                Intent settings = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(settings);
                 break;
 
             default:

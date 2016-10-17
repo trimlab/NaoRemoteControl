@@ -1,19 +1,18 @@
 package edu.mtu.naoremotecontrol.actiondialog;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import edu.mtu.naoremotecontrol.R;
 
-public class GestureActionDialogFragment extends Fragment
+public class GestureActionDialogFragment extends ActionDialogChildFragment
 {
+    private Spinner gestureSpinner;
     private SeekBar gestureSpeedLevel;
     private TextView gestureSpeedLevelView;
 
@@ -21,6 +20,7 @@ public class GestureActionDialogFragment extends Fragment
     {
         View v = inflater.inflate(R.layout.dialog_fragment_add_action_gesture, container, false);
 
+        gestureSpinner = (Spinner) v.findViewById(R.id.action_dialog_gesture);
         gestureSpeedLevel = (SeekBar) v.findViewById(R.id.action_dialog_gesturespeed_value);
         gestureSpeedLevelView = (TextView) v.findViewById(R.id.action_dialog_gesturespeed_value_display);
 
@@ -48,5 +48,17 @@ public class GestureActionDialogFragment extends Fragment
         });
 
         return v;
+    }
+
+    @Override
+    public String getData()
+    {
+        StringBuilder ret = new StringBuilder();
+        ret.append("Gesture/");
+        ret.append(gestureSpeedLevelView.getText());
+        ret.append(": ");
+        ret.append((String) gestureSpinner.getSelectedItem());
+
+        return ret.toString();
     }
 }

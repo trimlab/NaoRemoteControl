@@ -1,8 +1,6 @@
 package edu.mtu.naoremotecontrol.actiondialog;
 
 import android.os.Bundle;
-import android.support.annotation.StringDef;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +9,7 @@ import android.widget.TextView;
 
 import edu.mtu.naoremotecontrol.R;
 
-public class VolumeActionDialogFragment extends Fragment
+public class VolumeActionDialogFragment extends ActionDialogChildFragment
 {
     private SeekBar volumeLevel;
     private TextView volumeLevelView;
@@ -47,5 +45,14 @@ public class VolumeActionDialogFragment extends Fragment
         });
 
         return v;
+    }
+
+    @Override
+    public String getData()
+    {
+        StringBuilder ret = new StringBuilder();
+        ret.append("Volume: ");
+        ret.append(volumeLevelView.getText());
+        return ret.toString();
     }
 }

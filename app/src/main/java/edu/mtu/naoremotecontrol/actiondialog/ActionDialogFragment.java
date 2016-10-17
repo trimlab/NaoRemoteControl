@@ -1,9 +1,5 @@
 package edu.mtu.naoremotecontrol.actiondialog;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
@@ -11,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +16,24 @@ import edu.mtu.naoremotecontrol.R;
 
 public class ActionDialogFragment extends DialogFragment
 {
+    public interface OnDialogClosedListener
+    {
+        public void onDialogClosed(String data, int type, int index);
+    }
+
     private ViewPager viewPager;
     private ActionDialogPagerAdapter adapter;
+    private OnDialogClosedListener onDialogClosedListener;
     public static final int TYPE_CREATE = 0, TYPE_EDIT = 1;
+    private int index;
+    private int type;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View v = getActivity().getLayoutInflater().inflate(R.layout.dialog_add_action, null);
+
+        index = getArguments().getInt("index");
+        type = getArguments().getInt("type");
 
         TabLayout tabLayout = (TabLayout) v.findViewById(R.id.dialogActionTabLayout);
         viewPager = (DialogViewPager) v.findViewById(R.id.dialogActionViewPager);
@@ -52,7 +58,9 @@ public class ActionDialogFragment extends DialogFragment
             @Override
             public void onClick(View v)
             {
-                dismiss();
+                ActionDialogChildFragment current = (ActionDialogChildFragment) adapter.getItem(viewPager.getCurrentItem());
+                String header = adapter.getPageTitle(viewPager.getCurrentItem()) + ": ";
+                onDialogClosedListener.onDialogClosed(header + current.getData(), type, index);
             }
         });
 
@@ -66,6 +74,11 @@ public class ActionDialogFragment extends DialogFragment
         });
 
         return v;
+    }
+
+    public void setOnDialogClosedListener(OnDialogClosedListener listener)
+    {
+        this.onDialogClosedListener = listener;
     }
 
     private static class ActionDialogPagerAdapter extends FragmentPagerAdapter

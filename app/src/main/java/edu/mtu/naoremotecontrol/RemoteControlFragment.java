@@ -11,7 +11,7 @@ import android.widget.RadioGroup;
 
 import edu.mtu.naoremotecontrol.actiondialog.ActionDialogFragment;
 
-public class RemoteControlFragment extends Fragment implements RadioGroup.OnCheckedChangeListener
+public class RemoteControlFragment extends Fragment implements RadioGroup.OnCheckedChangeListener, ActionDialogFragment.OnDialogClosedListener
 {
     private RecyclerView scriptEditView;
     private ScriptEditViewAdapter adapter;
@@ -47,7 +47,27 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
         public void onClick(View v)
         {
             ActionDialogFragment dialog = new ActionDialogFragment();
+            dialog.setOnDialogClosedListener(RemoteControlFragment.this);
+            Bundle args = new Bundle();
+
+            args.putInt("index", adapter.getItemCount()-1);
+            args.putInt("type", ActionDialogFragment.TYPE_CREATE);
+
+            dialog.setArguments(args);
             dialog.show(getChildFragmentManager(), "insert_dialog");
         }
     };
+
+    @Override
+    public void onDialogClosed(String data, int type, int index)
+    {
+        if(type == ActionDialogFragment.TYPE_CREATE)
+        {
+            adapter.add(data);
+        }
+        else if(type == ActionDialogFragment.TYPE_EDIT)
+        {
+            adapter.update(data, index);
+        }
+    }
 }
