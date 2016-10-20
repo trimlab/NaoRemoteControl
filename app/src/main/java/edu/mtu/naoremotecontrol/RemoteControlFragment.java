@@ -4,10 +4,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RadioGroup;
+
+import java.util.Arrays;
 
 import edu.mtu.naoremotecontrol.actiondialog.ActionDialogFragment;
 
@@ -15,6 +19,7 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
 {
     private RecyclerView scriptEditView;
     private ScriptEditViewAdapter adapter;
+    private Button run, pause, stop;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle)
@@ -31,6 +36,19 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
         adapter = new ScriptEditViewAdapter();
         adapter.setInsertListener(insertListener);
         scriptEditView.setAdapter(adapter);
+
+        run = (Button) v.findViewById(R.id.runScript);
+        pause = (Button) v.findViewById(R.id.pauseScript);
+        stop = (Button)v.findViewById(R.id.stopScript);
+
+        run.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Log.d("Script", Arrays.toString(adapter.getScript().toArray()));
+            }
+        });
 
         return v;
     }

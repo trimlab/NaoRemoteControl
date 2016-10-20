@@ -30,6 +30,6 @@
     <SeekBar
         android:id="@+id/action_dialog_posespeed_value"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
