@@ -50,7 +50,6 @@ public class PitchActionDialogFragment extends ActionDialogChildFragment
     public String getData()
     {
         StringBuilder ret = new StringBuilder();
-        ret.append("Pitch: ");
         ret.append(pitchLevelView.getText());
         return ret.toString();
     }

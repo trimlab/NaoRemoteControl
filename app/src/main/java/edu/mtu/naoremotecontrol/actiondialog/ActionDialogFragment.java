@@ -37,7 +37,7 @@ public class ActionDialogFragment extends DialogFragment
 
         TabLayout tabLayout = (TabLayout) v.findViewById(R.id.dialogActionTabLayout);
         viewPager = (DialogViewPager) v.findViewById(R.id.dialogActionViewPager);
-
+        viewPager.setOffscreenPageLimit(6);
         adapter = new ActionDialogPagerAdapter(getChildFragmentManager(),
                 new Fragment[]{ new TextActionDialogFragment(),
                         new PitchActionDialogFragment(),
@@ -47,7 +47,7 @@ public class ActionDialogFragment extends DialogFragment
                         new GestureActionDialogFragment()});
 
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(6);
+
         tabLayout.setupWithViewPager(viewPager);
 
         Button positive = (Button) v.findViewById(R.id.dialogActionPositiveButton);
@@ -61,6 +61,7 @@ public class ActionDialogFragment extends DialogFragment
                 ActionDialogChildFragment current = (ActionDialogChildFragment) adapter.getItem(viewPager.getCurrentItem());
                 String header = adapter.getPageTitle(viewPager.getCurrentItem()) + ": ";
                 onDialogClosedListener.onDialogClosed(header + current.getData(), type, index);
+                dismiss();
             }
         });
 

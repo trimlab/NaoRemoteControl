@@ -2,7 +2,7 @@ package edu.mtu.naoremotecontrol;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +26,7 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
         manualAutomaticAnimation.check(manualAutomaticAnimation.getChildAt(0).getId());
 
         scriptEditView = (RecyclerView) v.findViewById(R.id.scriptEditView);
-        scriptEditView.setLayoutManager(new LinearLayoutManager(container.getContext()));
+        scriptEditView.setLayoutManager(new GridLayoutManager(container.getContext(), 2));
 
         adapter = new ScriptEditViewAdapter();
         adapter.setInsertListener(insertListener);

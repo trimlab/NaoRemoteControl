@@ -51,7 +51,6 @@ public class VolumeActionDialogFragment extends ActionDialogChildFragment
     public String getData()
     {
         StringBuilder ret = new StringBuilder();
-        ret.append("Volume: ");
         ret.append(volumeLevelView.getText());
         return ret.toString();
     }

@@ -50,7 +50,6 @@ public class RateActionDialogFragment extends ActionDialogChildFragment
     public String getData()
     {
         StringBuilder ret = new StringBuilder();
-        ret.append("Rate: ");
         ret.append(rateLevelView.getText());
 
         return ret.toString();

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -21,6 +22,10 @@ public class GestureActionDialogFragment extends ActionDialogChildFragment
         View v = inflater.inflate(R.layout.dialog_fragment_add_action_gesture, container, false);
 
         gestureSpinner = (Spinner) v.findViewById(R.id.action_dialog_gesture);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
+                new String[]{"Wave","Bow"});
+
         gestureSpeedLevel = (SeekBar) v.findViewById(R.id.action_dialog_gesturespeed_value);
         gestureSpeedLevelView = (TextView) v.findViewById(R.id.action_dialog_gesturespeed_value_display);
 
@@ -54,11 +59,9 @@ public class GestureActionDialogFragment extends ActionDialogChildFragment
     public String getData()
     {
         StringBuilder ret = new StringBuilder();
-        ret.append("Gesture/");
-        ret.append(gestureSpeedLevelView.getText());
-        ret.append(": ");
         ret.append((String) gestureSpinner.getSelectedItem());
-
+        ret.append("/");
+        ret.append(gestureSpeedLevelView.getText());
         return ret.toString();
     }
 }
