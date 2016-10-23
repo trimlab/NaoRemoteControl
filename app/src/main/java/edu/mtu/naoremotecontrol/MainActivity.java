@@ -23,8 +23,21 @@ import android.widget.Spinner;
 
 public class MainActivity extends AppCompatActivity
 {
+
     private RemoteControlPagerAdapter adapter;
     private ViewPager viewPager;
+    private RemoteControlFragment.OnSaveListener saveListener;
+    private RemoteControlFragment.OnLoadListener loadListener;
+
+    public void setOnSaveListener(RemoteControlFragment.OnSaveListener listener)
+    {
+        this.saveListener = listener;
+    }
+
+    public void setOnLoadListener(RemoteControlFragment.OnLoadListener listener)
+    {
+        this.loadListener = listener;
+    }
 
     public void onCreate(Bundle savedInstanceState)
     {
@@ -109,6 +122,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
+                        saveListener.onSave(fileNameField.getText().toString());
                         dialog.dismiss();
                     }
                 });

@@ -4,19 +4,28 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioGroup;
 
-import java.util.Arrays;
+import java.io.IOException;
 
 import edu.mtu.naoremotecontrol.actiondialog.ActionDialogFragment;
 
 public class RemoteControlFragment extends Fragment implements RadioGroup.OnCheckedChangeListener, ActionDialogFragment.OnDialogClosedListener
 {
+    public interface OnSaveListener
+    {
+        public void onSave(String fileName);
+    }
+
+    public interface OnLoadListener
+    {
+        public void onLoad(String fileName);
+    }
+
     private RecyclerView scriptEditView;
     private ScriptEditViewAdapter adapter;
     private Button run, pause, stop;
@@ -46,11 +55,46 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
             @Override
             public void onClick(View v)
             {
-                Log.d("Script", Arrays.toString(adapter.getScript().toArray()));
+
             }
         });
 
         return v;
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        MainActivity activity = (MainActivity) getActivity();
+
+        activity.setOnSaveListener(new OnSaveListener()
+        {
+            @Override
+            public void onSave(String fileName)
+            {
+                Script s = new Script(getActivity());
+
+                try
+                {
+                    s.write(adapter.getScript(), fileName + ".json");
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        activity.setOnLoadListener(new OnLoadListener()
+        {
+            @Override
+            public void onLoad(String fileName)
+            {
+
+            }
+        });
     }
 
     @Override
