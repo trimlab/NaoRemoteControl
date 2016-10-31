@@ -1,13 +1,15 @@
 package edu.mtu.naoremotecontrol;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
@@ -18,7 +20,7 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public ScriptEditViewAdapter()
     {
-        script = new LinkedList<>();
+        script = new ArrayList<>();
         script.add("");
     }
 
@@ -118,10 +120,27 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         notifyItemInserted(script.size()-1);
     }
 
+    public void addAll(List<String> items)
+    {
+        script.clear();
+        script.addAll(items);
+        script.add("");
+        notifyDataSetChanged();
+        Log.d("Loaded", Arrays.toString(script.toArray()));
+    }
+
     public void update(String item, int index)
     {
         script.set(index, item);
         notifyItemChanged(index);
+    }
+
+    public void clear()
+    {
+        for(int i = 0; i < script.size()-1; i++)
+        {
+            script.remove(i);
+        }
     }
 
     public List<String> getScript()

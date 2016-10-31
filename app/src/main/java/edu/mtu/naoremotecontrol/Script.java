@@ -6,17 +6,16 @@ import android.os.Environment;
 import android.util.JsonReader;
 import android.util.JsonWriter;
 import android.util.Log;
+import android.support.v4.util.Pair;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by EricMVasey on 10/23/2016.
- */
 
 public class Script
 {
@@ -54,8 +53,21 @@ public class Script
 
             while(reader.hasNext())
             {
+                String name = reader.nextName();
                 sb.append(reader.nextString());
+
+                if(name.equals("type"))
+                {
+                    sb.append(": ");
+                }
+                else
+                {
+                    sb.append("/");
+                }
             }
+
+            if(sb.charAt(sb.length()-1) == '/')
+                sb.deleteCharAt(sb.length()-1);
 
             ret.add(sb.toString());
             reader.endObject();
@@ -104,5 +116,117 @@ public class Script
         MediaScannerConnection.scanFile(c, new String[]{getSdCardDir()+"/"+fileName}, new String[]{"text/*"}, null);
 
         return true;
+    }
+
+    public List<Pair<String, String[]>> toNaoCommandString(List<String> input)
+    {
+        //Pair<Destination,Data>
+        List<String> in = new ArrayList<>(input);
+        ArrayList<Pair<String, String[]>> converted = new ArrayList<>();
+
+        for(int i = 0; i < in.size()-1; i++)
+        {
+            String entry = in.get(i);
+
+            String type = entry.substring(0, entry.indexOf(':'));
+            String data = entry.substring(entry.indexOf(':')+1,entry.length());
+            String value = null;
+            String rate = null;
+
+            if(type.equals("Pose") || type.equals("Gesture"))
+            {
+                String[] split = data.split("/");
+                value = split[0].trim();
+                rate = split[1].trim();
+            }
+            else
+                value = data.trim();
+
+            if(type.equals("Text"))
+                converted.add(new Pair<>("ALAnimatedSpeech", new String[]{value}));
+            else if(type.equals("Volume"))
+            {
+                for(int adjust = i+1; adjust < in.size()-1; adjust++)
+                {
+                    String item = in.get(adjust);
+                    String itemType = item.substring(0, item.indexOf(':'));
+
+                    if(itemType.equals("Volume"))
+                    {
+                        break;
+                    }
+
+                    if(itemType.equals("Text"))
+                    {
+                        String itemData = item.substring(item.indexOf(':')+1,item.length());
+                        itemData = "\\\\vol=" + value + "\\\\ " + itemData;
+                        in.set(adjust, "Text: " + itemData);
+                    }
+                }
+            }
+            else if(type.equals("Rate"))
+            {
+                for(int adjust = i+1; adjust < in.size()-1; adjust++)
+                {
+                    String item = in.get(adjust);
+                    String itemType = item.substring(0, item.indexOf(':'));
+
+                    if(itemType.equals("Rate"))
+                    {
+                        break;
+                    }
+
+                    if(itemType.equals("Text"))
+                    {
+                        String itemData = item.substring(item.indexOf(':')+1,item.length());
+                        itemData = "\\\\rspd=" + value + "\\\\ " + itemData;
+                        in.set(adjust, "Text: " + itemData);
+                    }
+                }
+            }
+            else if(type.equals("Pitch"))
+            {
+                for(int adjust = i+1; adjust < in.size()-1; adjust++)
+                {
+                    String item = in.get(adjust);
+                    String itemType = item.substring(0, item.indexOf(':'));
+
+                    if(itemType.equals("Pitch"))
+                    {
+                        break;
+                    }
+
+                    if(itemType.equals("Text"))
+                    {
+                        String itemData = item.substring(item.indexOf(':')+1,item.length());
+                        itemData = "\\\\vct=" + value + "\\\\ " + itemData;
+                        in.set(adjust, "Text: " + itemData);
+                    }
+                }
+            }
+            else if(type.equals("Gesture"))
+            {
+                converted.add(new Pair<String, String[]>("ALAnimatedSpeech", new String[]{value, rate}));
+            }
+            else if(type.equals("Pose"))
+            {
+                converted.add(new Pair<>("ALRobotPosture", new String[]{value, rate}));
+            }
+
+            List<Pair<String, String[]>> result = converted;
+
+            StringBuilder sb = new StringBuilder();
+            for(Pair pair: result)
+            {
+                sb.append(pair.first);
+                sb.append(": ");
+                sb.append(Arrays.toString((Object[]) pair.second));
+                sb.append("\n");
+            }
+
+            Log.d("Parsed", sb.toString());
+        }
+
+        return converted;
     }
 }

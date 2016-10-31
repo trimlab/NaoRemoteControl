@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,6 +21,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import java.io.File;
+import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -77,12 +81,12 @@ public class MainActivity extends AppCompatActivity
             private EditText ipAddress;
             private View connectionDialogProgressContainer;
             @Override
-            public void onShow(DialogInterface dialog)
+            public void onShow(final DialogInterface dialog)
             {
                 ipAddress = (EditText) ((Dialog) dialog).findViewById(R.id.connectionDialogIpAddress);
                 connectionDialogProgressContainer = ((Dialog) dialog).findViewById(R.id.connectionDialogProgressContainer);
 
-                Button connect = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                final Button connect = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
                 connect.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
@@ -90,6 +94,16 @@ public class MainActivity extends AppCompatActivity
                     {
                         ipAddress.setVisibility(View.GONE);
                         connectionDialogProgressContainer.setVisibility(View.VISIBLE);
+                        new Thread(new Runnable()
+                        {
+                            private int connectionAttempts = 0;
+                            @Override
+                            public void run()
+                            {
+                                NaoRemoteControlApplication application = (NaoRemoteControlApplication) getApplication();
+                                application.connect(ipAddress.getText().toString());
+                            }
+                        });
                     }
                 });
             }
@@ -140,9 +154,30 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.action_load:
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("file/*");
-                startActivityForResult(intent, 450);
+                File dir = new File(Environment.getExternalStorageDirectory().getPath()
+                        + "/nao_scripts/");
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+                builder1.setTitle("Select a Script");
+
+                LinkedList<String> scriptNames = new LinkedList<>();
+
+                for(File script: dir.listFiles())
+                {
+                    scriptNames.add(script.getName().replaceAll(".json",""));
+                }
+
+                final ArrayAdapter<String> scripts = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, scriptNames);
+                builder1.setAdapter(scripts, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        loadListener.onLoad(scripts.getItem(which) + ".json");
+                        dialog.dismiss();
+                    }
+                });
+                builder1.show();
                 break;
 
             case R.id.action_execute:

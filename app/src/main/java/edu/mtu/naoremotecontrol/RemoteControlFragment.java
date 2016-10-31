@@ -2,6 +2,7 @@ package edu.mtu.naoremotecontrol;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.RadioGroup;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import edu.mtu.naoremotecontrol.actiondialog.ActionDialogFragment;
 
@@ -40,8 +43,7 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
         manualAutomaticAnimation.check(manualAutomaticAnimation.getChildAt(0).getId());
 
         scriptEditView = (RecyclerView) v.findViewById(R.id.scriptEditView);
-        scriptEditView.setLayoutManager(new GridLayoutManager(container.getContext(), 2));
-
+        scriptEditView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
         adapter = new ScriptEditViewAdapter();
         adapter.setInsertListener(insertListener);
         scriptEditView.setAdapter(adapter);
@@ -55,7 +57,17 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
             @Override
             public void onClick(View v)
             {
+                Script s = new Script(getActivity());
+                List<Pair<String, String[]>> result = s.toNaoCommandString(adapter.getScript());
 
+                StringBuilder sb = new StringBuilder();
+                for(Pair pair: result)
+                {
+                    sb.append(pair.first);
+                    sb.append(": ");
+                    sb.append(Arrays.toString((Object[]) pair.second));
+                    sb.append("\n");
+                }
             }
         });
 
@@ -92,7 +104,17 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
             @Override
             public void onLoad(String fileName)
             {
+                Script s = new Script(getActivity());
 
+                try
+                {
+                    List<String> data = s.read(fileName);
+                    adapter.addAll(data);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
     }
