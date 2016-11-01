@@ -17,6 +17,11 @@ public class TextActionDialogFragment extends ActionDialogChildFragment
 
         text = (EditText) v.findViewById(R.id.action_dialog_text);
 
+        if(inputData != null)
+        {
+            text.setText(inputData[0]);
+        }
+
         return v;
     }
 

@@ -1,7 +1,9 @@
 package edu.mtu.naoremotecontrol;
 
 import android.app.Application;
+import android.support.v4.util.Pair;
 
+import com.aldebaran.qi.CallError;
 import com.aldebaran.qi.Session;
 import com.aldebaran.qi.helper.proxies.ALAnimatedSpeech;
 import com.aldebaran.qi.helper.proxies.ALAutonomousLife;
@@ -69,5 +71,17 @@ public class NaoRemoteControlApplication extends Application
     public List<String> getPoses()
     {
         return null;
+    }
+
+    public void runCommand(Pair<String, String[]> command) throws CallError, InterruptedException
+    {
+        if(command.first.equals("ALAnimatedSpeech"))
+        {
+            naoAnimatedSpeech.say(command.second[0]);
+        }
+        else if(command.first.equals("ALRobotPosture"))
+        {
+            naoPosture.goToPosture(command.second[0], Float.parseFloat(command.second[1]));
+        }
     }
 }

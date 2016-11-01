@@ -43,6 +43,12 @@ public class PitchActionDialogFragment extends ActionDialogChildFragment
             }
         });
 
+        if(inputData != null)
+        {
+            pitchLevel.setProgress(Integer.parseInt(inputData[0]));
+            pitchLevelView.setText(inputData[0]);
+        }
+
         return v;
     }
 

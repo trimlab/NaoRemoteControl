@@ -16,6 +16,7 @@ public class GestureActionDialogFragment extends ActionDialogChildFragment
     private Spinner gestureSpinner;
     private SeekBar gestureSpeedLevel;
     private TextView gestureSpeedLevelView;
+    private ArrayAdapter<String> gestureAdapter;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -23,7 +24,7 @@ public class GestureActionDialogFragment extends ActionDialogChildFragment
 
         gestureSpinner = (Spinner) v.findViewById(R.id.action_dialog_gesture);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
+        gestureAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
                 new String[]{"Wave","Bow"});
 
         gestureSpeedLevel = (SeekBar) v.findViewById(R.id.action_dialog_gesturespeed_value);
@@ -51,6 +52,13 @@ public class GestureActionDialogFragment extends ActionDialogChildFragment
 
             }
         });
+
+        if(inputData != null)
+        {
+            gestureSpinner.setSelection(gestureAdapter.getPosition(inputData[0]));
+            gestureSpeedLevel.setProgress(Integer.parseInt(inputData[1]));
+            gestureSpeedLevelView.setText(inputData[1]);
+        }
 
         return v;
     }

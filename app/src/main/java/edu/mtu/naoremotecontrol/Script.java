@@ -26,7 +26,7 @@ public class Script
         this.c = c;
     }
 
-    private String getSdCardDir()
+    private static String getSdCardDir()
     {
         String mExternalDirectory = Environment.getExternalStorageDirectory()
                 .getAbsolutePath();
@@ -39,7 +39,7 @@ public class Script
         return externDir.getAbsolutePath();
     }
 
-    public List<String> read(String fileName) throws IOException
+    public static List<String> read(String fileName) throws IOException
     {
         List<String> ret = new ArrayList<>();
         JsonReader reader = new JsonReader(new FileReader(getSdCardDir()+"/"+fileName));
@@ -76,7 +76,7 @@ public class Script
         return ret;
     }
 
-    public boolean write(List<String> entries, String fileName) throws IOException
+    public static boolean write(List<String> entries, String fileName, Context c) throws IOException
     {
         JsonWriter writer = new JsonWriter(new FileWriter(getSdCardDir()+"/"+fileName));
         writer.setIndent("    ");
@@ -118,13 +118,13 @@ public class Script
         return true;
     }
 
-    public List<Pair<String, String[]>> toNaoCommandString(List<String> input)
+    public static List<Pair<String, String[]>> toNaoCommandString(List<String> input)
     {
         //Pair<Destination,Data>
         List<String> in = new ArrayList<>(input);
         ArrayList<Pair<String, String[]>> converted = new ArrayList<>();
 
-        for(int i = 0; i < in.size()-1; i++)
+        for(int i = 0; i < in.size(); i++)
         {
             String entry = in.get(i);
 
@@ -146,7 +146,7 @@ public class Script
                 converted.add(new Pair<>("ALAnimatedSpeech", new String[]{value}));
             else if(type.equals("Volume"))
             {
-                for(int adjust = i+1; adjust < in.size()-1; adjust++)
+                for(int adjust = i+1; adjust < in.size(); adjust++)
                 {
                     String item = in.get(adjust);
                     String itemType = item.substring(0, item.indexOf(':'));
@@ -166,7 +166,7 @@ public class Script
             }
             else if(type.equals("Rate"))
             {
-                for(int adjust = i+1; adjust < in.size()-1; adjust++)
+                for(int adjust = i+1; adjust < in.size(); adjust++)
                 {
                     String item = in.get(adjust);
                     String itemType = item.substring(0, item.indexOf(':'));
@@ -186,7 +186,7 @@ public class Script
             }
             else if(type.equals("Pitch"))
             {
-                for(int adjust = i+1; adjust < in.size()-1; adjust++)
+                for(int adjust = i+1; adjust < in.size(); adjust++)
                 {
                     String item = in.get(adjust);
                     String itemType = item.substring(0, item.indexOf(':'));
@@ -223,8 +223,6 @@ public class Script
                 sb.append(Arrays.toString((Object[]) pair.second));
                 sb.append("\n");
             }
-
-            Log.d("Parsed", sb.toString());
         }
 
         return converted;

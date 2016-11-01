@@ -8,5 +8,11 @@ import android.support.v4.app.Fragment;
 
 public abstract class ActionDialogChildFragment extends Fragment
 {
+    protected String[] inputData = null;
     public abstract String getData();
+
+    public void setData(String... data)
+    {
+        inputData = data;
+    }
 }

@@ -44,6 +44,12 @@ public class VolumeActionDialogFragment extends ActionDialogChildFragment
             }
         });
 
+        if(inputData != null)
+        {
+            volumeLevel.setProgress(Integer.parseInt(inputData[0]));
+            volumeLevelView.setText(inputData[0]);
+        }
+
         return v;
     }
 

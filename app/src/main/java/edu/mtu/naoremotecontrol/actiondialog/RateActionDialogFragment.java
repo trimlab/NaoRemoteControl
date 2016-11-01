@@ -43,6 +43,12 @@ public class RateActionDialogFragment extends ActionDialogChildFragment
             }
         });
 
+        if(inputData != null)
+        {
+            rateLevel.setProgress(Integer.parseInt(inputData[0]));
+            rateLevelView.setText(inputData[0]);
+        }
+
         return v;
     }
 

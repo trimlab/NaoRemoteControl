@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +16,8 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private List<String> script;
     private final int BUTTON = 1, INSERT_BUTTON = 2;
     private View.OnClickListener insertListener;
+    private View.OnClickListener runListener;
+    private View.OnLongClickListener menuListener;
 
     public ScriptEditViewAdapter()
     {
@@ -27,6 +28,14 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void setInsertListener(View.OnClickListener listener)
     {
         insertListener = listener;
+    }
+    public void setRunListener(View.OnClickListener listener)
+    {
+        runListener = listener;
+    }
+    public void setMenuListener(View.OnLongClickListener listener)
+    {
+        menuListener = listener;
     }
 
     private class ButtonViewHolder extends RecyclerView.ViewHolder implements Button.OnClickListener
@@ -57,7 +66,7 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         @Override
         public void onClick(View v)
         {
-            Toast.makeText(v.getContext(), "Button!", Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -78,6 +87,13 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             case BUTTON:
                 Button b = new Button(parent.getContext());
                 b.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                if(runListener != null)
+                    b.setOnClickListener(runListener);
+
+                if(menuListener != null)
+                    b.setOnLongClickListener(menuListener);
+
                 return new ButtonViewHolder(b, false);
 
             case INSERT_BUTTON:
@@ -133,6 +149,7 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     {
         script.set(index, item);
         notifyItemChanged(index);
+        Log.d("Updated", Arrays.toString(script.toArray()));
     }
 
     public void clear()

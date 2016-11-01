@@ -14,6 +14,7 @@ import edu.mtu.naoremotecontrol.R;
 public class PoseActionDialogFragment extends ActionDialogChildFragment
 {
     private Spinner pose;
+    private ArrayAdapter<String> poseAdapter;
     private SeekBar poseSpeed;
     private TextView poseSpeedView;
 
@@ -23,10 +24,10 @@ public class PoseActionDialogFragment extends ActionDialogChildFragment
 
         pose = (Spinner) v.findViewById(R.id.action_dialog_pose);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
+        poseAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
                 new String[]{"Stand", "Sit"});
 
-        pose.setAdapter(adapter);
+        pose.setAdapter(poseAdapter);
 
         poseSpeed = (SeekBar) v.findViewById(R.id.action_dialog_posespeed_value);
         poseSpeedView = (TextView) v.findViewById(R.id.action_dialog_posespeed_value_display);
@@ -53,6 +54,13 @@ public class PoseActionDialogFragment extends ActionDialogChildFragment
 
             }
         });
+
+        if(inputData != null)
+        {
+            pose.setSelection(poseAdapter.getPosition(inputData[0]));
+            poseSpeed.setProgress(Integer.parseInt(inputData[1]));
+            poseSpeedView.setText(inputData[1]);
+        }
 
         return v;
     }

@@ -1,8 +1,10 @@
 package edu.mtu.naoremotecontrol;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,9 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.Toast;
+
+import com.aldebaran.qi.CallError;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import edu.mtu.naoremotecontrol.actiondialog.ActionDialogFragment;
@@ -46,6 +51,8 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
         scriptEditView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
         adapter = new ScriptEditViewAdapter();
         adapter.setInsertListener(insertListener);
+        adapter.setRunListener(runListener);
+        adapter.setMenuListener(menuListener);
         scriptEditView.setAdapter(adapter);
 
         run = (Button) v.findViewById(R.id.runScript);
@@ -54,20 +61,37 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
 
         run.setOnClickListener(new View.OnClickListener()
         {
+            private List<Pair<String, String[]>> naoScript;
             @Override
             public void onClick(View v)
             {
-                Script s = new Script(getActivity());
-                List<Pair<String, String[]>> result = s.toNaoCommandString(adapter.getScript());
+                naoScript = Script.toNaoCommandString(adapter.getScript().subList(0, adapter.getScript().size()-1));
 
-                StringBuilder sb = new StringBuilder();
-                for(Pair pair: result)
+                new Thread(new Runnable()
                 {
-                    sb.append(pair.first);
-                    sb.append(": ");
-                    sb.append(Arrays.toString((Object[]) pair.second));
-                    sb.append("\n");
-                }
+                    @Override
+                    public void run()
+                    {
+                        NaoRemoteControlApplication application = (NaoRemoteControlApplication) getActivity().getApplication();
+                        for(int i = 0; i < naoScript.size(); i++)
+                        {
+                            Pair<String, String[]> action = naoScript.get(i);
+                            View current = scriptEditView.getChildAt(i);
+
+                            Toast.makeText(getActivity(), action.second[0], Toast.LENGTH_SHORT).show();
+
+                            try
+                            {
+                                Thread.sleep(250);
+                                //application.runCommand(action);
+                            }
+                            catch (InterruptedException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }).run();
             }
         });
 
@@ -86,11 +110,10 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
             @Override
             public void onSave(String fileName)
             {
-                Script s = new Script(getActivity());
 
                 try
                 {
-                    s.write(adapter.getScript(), fileName + ".json");
+                    Script.write(adapter.getScript(), fileName + ".json", getActivity());
                 }
                 catch (IOException e)
                 {
@@ -104,11 +127,10 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
             @Override
             public void onLoad(String fileName)
             {
-                Script s = new Script(getActivity());
 
                 try
                 {
-                    List<String> data = s.read(fileName);
+                    List<String> data = Script.read(fileName);
                     adapter.addAll(data);
                 }
                 catch (IOException e)
@@ -139,6 +161,85 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
 
             dialog.setArguments(args);
             dialog.show(getChildFragmentManager(), "insert_dialog");
+        }
+    };
+
+    private View.OnClickListener runListener = new View.OnClickListener()
+    {
+        @Override
+        public void onClick(View v)
+        {
+            NaoRemoteControlApplication application = (NaoRemoteControlApplication) getActivity().getApplication();
+            int index = scriptEditView.getChildAdapterPosition(v);
+            String command = adapter.getScript().get(index);
+
+            Pair<String, String[]> commandPair = Script.toNaoCommandString(Collections.singletonList(command)).get(0);
+
+            try
+            {
+                application.runCommand(commandPair);
+            }
+            catch (CallError callError)
+            {
+                callError.printStackTrace();
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private View.OnLongClickListener menuListener = new View.OnLongClickListener()
+    {
+        @Override
+        public boolean onLongClick(final View buttonView)
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(buttonView.getContext());
+            builder.setItems(new String[]{"Run", "Edit"}, new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    if(which == 0)
+                    {
+                        NaoRemoteControlApplication application = (NaoRemoteControlApplication) getActivity().getApplication();
+                        int index = scriptEditView.getChildAdapterPosition(buttonView);
+                        String command = adapter.getScript().get(index);
+                        Pair<String, String[]> commandPair = Script.toNaoCommandString(Collections.singletonList(command)).get(0);
+
+                        try
+                        {
+                            application.runCommand(commandPair);
+                        }
+                        catch (CallError callError)
+                        {
+                            callError.printStackTrace();
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    else if(which == 1)
+                    {
+                        ActionDialogFragment edit = new ActionDialogFragment();
+                        edit.setOnDialogClosedListener(RemoteControlFragment.this);
+                        Bundle args = new Bundle();
+
+                        int index = scriptEditView.getChildAdapterPosition(buttonView);
+                        args.putInt("index", index);
+                        args.putInt("type", ActionDialogFragment.TYPE_EDIT);
+                        args.putString("data", adapter.getScript().get(index));
+                        edit.setArguments(args);
+                        edit.show(getChildFragmentManager(), "insert_dialog");
+                    }
+                }
+            });
+
+            builder.show();
+
+            return false;
         }
     };
 
