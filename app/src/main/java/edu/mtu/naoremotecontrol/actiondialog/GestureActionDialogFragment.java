@@ -9,6 +9,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import edu.mtu.naoremotecontrol.NaoRemoteControlApplication;
 import edu.mtu.naoremotecontrol.R;
 
 public class GestureActionDialogFragment extends ActionDialogChildFragment
@@ -25,7 +26,9 @@ public class GestureActionDialogFragment extends ActionDialogChildFragment
         gestureSpinner = (Spinner) v.findViewById(R.id.action_dialog_gesture);
 
         gestureAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
-                new String[]{"Wave","Bow"});
+                ((NaoRemoteControlApplication) getActivity().getApplication()).getGestures());
+
+        gestureSpinner.setAdapter(gestureAdapter);
 
         gestureSpeedLevel = (SeekBar) v.findViewById(R.id.action_dialog_gesturespeed_value);
         gestureSpeedLevelView = (TextView) v.findViewById(R.id.action_dialog_gesturespeed_value_display);
@@ -68,8 +71,6 @@ public class GestureActionDialogFragment extends ActionDialogChildFragment
     {
         StringBuilder ret = new StringBuilder();
         ret.append((String) gestureSpinner.getSelectedItem());
-        ret.append("/");
-        ret.append(gestureSpeedLevelView.getText());
         return ret.toString();
     }
 }

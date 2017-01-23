@@ -33,4 +33,5 @@
     <string name="settings_global_speed_title">Global Speed</string>
     <string name="settings_misc_title">Miscellaneous</string>
     <string name="settings_global_title">Global Robot Settings</string>
+    <string name="label_temperature">Temperatures</string>
 </resources>
