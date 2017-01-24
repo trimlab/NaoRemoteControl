@@ -201,13 +201,13 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
             {
                 application.runCommand(commandPair);
             }
-            catch (CallError callError)
-            {
-                callError.printStackTrace();
-            }
             catch (InterruptedException e)
             {
                 e.printStackTrace();
+            }
+            catch (CallError callError)
+            {
+                callError.printStackTrace();
             }
         }
     };
@@ -234,13 +234,13 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
                         {
                             application.runCommand(commandPair);
                         }
-                        catch (CallError callError)
-                        {
-                            callError.printStackTrace();
-                        }
                         catch (InterruptedException e)
                         {
                             e.printStackTrace();
+                        }
+                        catch (CallError callError)
+                        {
+                            callError.printStackTrace();
                         }
                     }
                     else if(which == 1)
