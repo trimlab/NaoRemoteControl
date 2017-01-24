@@ -48,21 +48,21 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.mainTabLayout);
-
-        if (toolbar != null)
-        {
-            setSupportActionBar(toolbar);
-        }
-
-        viewPager = (ViewPager) findViewById(R.id.mainViewPager);
-
-        adapter = new RemoteControlPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
-
         showConnectionDialog();
+    }
+
+    public void onDestroy()
+    {
+        super.onDestroy();
+        NaoRemoteControlApplication application = (NaoRemoteControlApplication)getApplication();
+        try
+        {
+            application.disconnect();
+        }
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     private void showConnectionDialog()
@@ -102,8 +102,28 @@ public class MainActivity extends AppCompatActivity
                             {
                                 NaoRemoteControlApplication application = (NaoRemoteControlApplication) getApplication();
                                 application.connect(ipAddress.getText().toString());
+
+                                dialog.dismiss();
+
+                                runOnUiThread(new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+                                        TabLayout tablayout = (TabLayout)findViewById(R.id.mainTabLayout);
+                                        if (toolbar != null)
+                                        {
+                                            setSupportActionBar(toolbar);
+                                        }
+                                        viewPager = (ViewPager)findViewById(R.id.mainViewPager);
+                                        adapter = new RemoteControlPagerAdapter(getSupportFragmentManager());
+                                        viewPager.setAdapter(adapter);
+                                        tablayout.setupWithViewPager(viewPager);
+                                    }
+                                });
                             }
-                        });
+                        }).start();
                     }
                 });
             }

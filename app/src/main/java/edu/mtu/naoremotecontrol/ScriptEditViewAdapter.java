@@ -152,6 +152,12 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         Log.d("Updated", Arrays.toString(script.toArray()));
     }
 
+    public void remove(int i)
+    {
+        script.remove(i);
+        notifyItemRemoved(i);
+    }
+
     public void clear()
     {
         for(int i = 0; i < script.size()-1; i++)

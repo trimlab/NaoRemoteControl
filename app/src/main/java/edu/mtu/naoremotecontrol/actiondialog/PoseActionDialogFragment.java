@@ -9,6 +9,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import edu.mtu.naoremotecontrol.NaoRemoteControlApplication;
 import edu.mtu.naoremotecontrol.R;
 
 public class PoseActionDialogFragment extends ActionDialogChildFragment
@@ -17,15 +18,18 @@ public class PoseActionDialogFragment extends ActionDialogChildFragment
     private ArrayAdapter<String> poseAdapter;
     private SeekBar poseSpeed;
     private TextView poseSpeedView;
+    private NaoRemoteControlApplication application;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View v = inflater.inflate(R.layout.dialog_fragment_add_action_pose, container, false);
 
+        application = (NaoRemoteControlApplication) getActivity().getApplication();
+
         pose = (Spinner) v.findViewById(R.id.action_dialog_pose);
 
         poseAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
-                new String[]{"Stand", "Sit"});
+                application.getPosesTitles());
 
         pose.setAdapter(poseAdapter);
 
@@ -69,7 +73,7 @@ public class PoseActionDialogFragment extends ActionDialogChildFragment
     public String getData()
     {
         StringBuilder ret = new StringBuilder();
-        ret.append((String) pose.getSelectedItem());
+        ret.append(application.getPoses().get(pose.getSelectedItemPosition()));
         ret.append("/");
         ret.append(poseSpeedView.getText());
 

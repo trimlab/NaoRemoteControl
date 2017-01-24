@@ -1,6 +1,8 @@
 package edu.mtu.naoremotecontrol;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
@@ -12,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.aldebaran.qi.CallError;
 
@@ -78,16 +79,23 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
                             Pair<String, String[]> action = naoScript.get(i);
                             View current = scriptEditView.getChildAt(i);
 
-                            Toast.makeText(getActivity(), action.second[0], Toast.LENGTH_SHORT).show();
+                            if(i != 0)
+                            {
+                                scriptEditView.getChildAt(i-1).getBackground().clearColorFilter();
+                            }
+                            current.getBackground().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
 
                             try
                             {
-                                Thread.sleep(250);
-                                //application.runCommand(action);
+                                application.runCommand(action);
                             }
                             catch (InterruptedException e)
                             {
                                 e.printStackTrace();
+                            }
+                            catch (CallError callError)
+                            {
+                                callError.printStackTrace();
                             }
                         }
                     }
@@ -141,10 +149,24 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
         });
     }
 
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId)
+    public void onCheckedChanged(RadioGroup group, int i)
     {
-
+        NaoRemoteControlApplication application = (NaoRemoteControlApplication)getActivity().getApplication();
+        try
+        {
+            if (group.getChildAt(0).getId() == i)
+            {
+                application.setAutomaticAnimationEnabled(false);
+            }
+            else if (group.getChildAt(1).getId() == i)
+            {
+                application.setAutomaticAnimationEnabled(true);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private View.OnClickListener insertListener = new View.OnClickListener()
@@ -196,7 +218,7 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
         public boolean onLongClick(final View buttonView)
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(buttonView.getContext());
-            builder.setItems(new String[]{"Run", "Edit"}, new DialogInterface.OnClickListener()
+            builder.setItems(new String[]{"Run", "Edit", "Delete"}, new DialogInterface.OnClickListener()
             {
                 @Override
                 public void onClick(DialogInterface dialog, int which)
@@ -233,6 +255,29 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
                         args.putString("data", adapter.getScript().get(index));
                         edit.setArguments(args);
                         edit.show(getChildFragmentManager(), "insert_dialog");
+                    }
+                    else if(which == 2)
+                    {
+                        AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                        builder.setTitle("Are you sure you want to delete this?");
+                        builder.setPositiveButton("Yes", new android.content.DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialoginterface, int i)
+                            {
+                                adapter.remove(scriptEditView.getChildAdapterPosition(buttonView));
+                            }
+                        });
+
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        builder.show();
                     }
                 }
             });

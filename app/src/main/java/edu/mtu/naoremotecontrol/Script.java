@@ -85,7 +85,7 @@ public class Script
         {
             String type = entry.substring(0, entry.indexOf(':'));
 
-            String data = entry.substring(entry.indexOf(':')+2,entry.length()-1);
+            String data = entry.substring(entry.indexOf(':')+1,entry.length());
             String value = null;
             String rate = null;
 
@@ -133,7 +133,7 @@ public class Script
             String value = null;
             String rate = null;
 
-            if(type.equals("Pose") || type.equals("Gesture"))
+            if(type.equals("Pose"))
             {
                 String[] split = data.split("/");
                 value = split[0].trim();
@@ -206,7 +206,13 @@ public class Script
             }
             else if(type.equals("Gesture"))
             {
-                converted.add(new Pair<String, String[]>("ALAnimatedSpeech", new String[]{value, rate}));
+                converted.add(new Pair<String, String[]>("ALAnimatedSpeech", new String[] {
+                        (new StringBuilder()).append("^startTag(")
+                                .append(value)
+                                .append(") ^waitTag(").append(value).append(")").toString()
+                }));
+
+                Log.d("Gesture", value);
             }
             else if(type.equals("Pose"))
             {

@@ -6,15 +6,18 @@ import android.support.v4.util.Pair;
 import com.aldebaran.qimessaging.CallError;
 import com.aldebaran.qimessaging.Session;
 import com.aldebaran.qimessaging.helpers.al.ALAnimatedSpeech;
+import com.aldebaran.qimessaging.helpers.al.ALAudioDevice;
 import com.aldebaran.qimessaging.helpers.al.ALAutonomousLife;
 import com.aldebaran.qimessaging.helpers.al.ALBattery;
 import com.aldebaran.qimessaging.helpers.al.ALBodyTemperature;
+import com.aldebaran.qimessaging.helpers.al.ALMemory;
 import com.aldebaran.qimessaging.helpers.al.ALMotion;
 import com.aldebaran.qimessaging.helpers.al.ALPreferences;
 import com.aldebaran.qimessaging.helpers.al.ALRobotPosture;
 import com.aldebaran.qimessaging.helpers.al.ALSystem;
 import com.aldebaran.qimessaging.helpers.al.ALTextToSpeech;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,6 +36,8 @@ public class NaoRemoteControlApplication extends Application
     private ALTextToSpeech naoTextToSpeech;
     private ALPreferences naoPreferences;
     private ALRobotPosture naoPosture;
+    private ALAudioDevice naoAudioDevice;
+    private ALMemory naoMemory;
 
     public boolean connect(String ip)
     {
@@ -44,31 +49,81 @@ public class NaoRemoteControlApplication extends Application
             naoMotion = new ALMotion(naoSession);
             naoPosture = new ALRobotPosture(naoSession);
             naoAutonomousLife = new ALAutonomousLife(naoSession);
+            naoAutonomousLife.setState("disabled");
             naoSystem = new ALSystem(naoSession);
             naoBattery = new ALBattery(naoSession);
             naoBodyTemperature = new ALBodyTemperature(naoSession);
             naoTextToSpeech = new ALTextToSpeech(naoSession);
+            naoBattery = new ALBattery(naoSession);
+            naoAudioDevice = new ALAudioDevice(naoSession);
+            naoMemory = new ALMemory(naoSession);
 
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             return false;
         }
 
         return true;
     }
 
-    public List<String> getGestures()
+    public void disconnect() throws InterruptedException, CallError
     {
-        return null;
+        naoAutonomousLife.setState("solitary");
+        naoSession.close();
     }
 
-    public List<String> getPrograms()
+    public int getBatteryLevel()
+            throws Exception
     {
-        return null;
+        return naoBattery.getBatteryCharge();
+    }
+
+    public String getCPUTemperature()
+            throws Exception
+    {
+        return naoMemory.getData("Device/SubDeviceList/Head/Temperature/Sensor/Value").toString();
+    }
+
+    public List<String> getGestures()
+    {
+        return Arrays.asList(
+                "affirmative", "alright", "beg", "beseech", "body language", "bow", "call", "clear", "enthusiastic", "entreat",
+                "explain", "happy", "hello", "hey", "hi", "I", "implore", "indicate", "me", "my",
+                "myself", "negative", "no", "not know", "ok", "oppose", "please", "present", "rapturous", "raring",
+                "refute", "reject", "rousing", "show", "supplicate", "unacquainted", "undetermined", "undiscovered", "unfamiliar", "unknown",
+                "warm", "yeah", "yes", "yoo-hoo", "you", "your", "zestful"
+        );
+    }
+
+    public Float getGlobalSpeechRate()
+            throws Exception
+    {
+        return naoTextToSpeech.getParameter("speed");
+    }
+
+    public int getGlobalVolume()
+            throws Exception
+    {
+        return naoAudioDevice.getOutputVolume();
     }
 
     public List<String> getPoses()
+    {
+        return Arrays.asList(
+                "Crouch", "LyingBack", "LyingBelly", "Sit", "SitRelax", "Stand"
+        );
+    }
+
+    public List<String> getPosesTitles()
+    {
+        return Arrays.asList(
+                "Crouch", "Lying Back", "Lying Belly", "Sit", "Sit Relax", "Stand"
+        );
+    }
+
+    public List getPrograms()
     {
         return null;
     }
@@ -81,7 +136,32 @@ public class NaoRemoteControlApplication extends Application
         }
         else if(command.first.equals("ALRobotPosture"))
         {
-            naoPosture.goToPosture(command.second[0], Float.parseFloat(command.second[1]));
+            naoPosture.goToPosture(command.second[0], Float.parseFloat(command.second[1])/100.0f);
         }
+    }
+
+    public void setAutomaticAnimationEnabled(boolean enabled)
+            throws Exception
+    {
+        if (enabled)
+        {
+            naoAnimatedSpeech.setBodyLanguageModeFromStr("context");
+        }
+        else
+        {
+            naoAnimatedSpeech.setBodyLanguageModeFromStr("disabled");
+        }
+    }
+
+    public void setGlobalSpeechRate(float f)
+            throws Exception
+    {
+        naoTextToSpeech.setParameter("speed", Float.valueOf(f / 100F));
+    }
+
+    public void setGlobalVolume(int i)
+            throws Exception
+    {
+        naoAudioDevice.setOutputVolume(Integer.valueOf(i / 100));
     }
 }
