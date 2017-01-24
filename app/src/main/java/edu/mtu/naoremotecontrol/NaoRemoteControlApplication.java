@@ -26,6 +26,45 @@ import java.util.List;
 
 public class NaoRemoteControlApplication extends Application
 {
+    public enum WalkDirection
+    {
+        FORWARD("forward", 0.040f, 0.0f, 0),
+        BACKWARD("backward", -0.040f, 0.0f, 0),
+        LEFT("left", 0, 0.140f, (float) (-1 * Math.PI/2.0f)),
+        RIGHT("right", 0, 0.140f, (float) (Math.PI/2.0f));
+
+        private String toString;
+        private float x,y, theta;
+
+        WalkDirection(String str, float x, float y, float theta)
+        {
+            this.toString = str;
+            this.x = x;
+            this.y = y;
+            this.theta = theta;
+        }
+
+        public float getX()
+        {
+            return x;
+        }
+
+        public float getY()
+        {
+            return y;
+        }
+
+        public float getTheta()
+        {
+            return theta;
+        }
+
+        public String toString()
+        {
+            return toString;
+        }
+    }
+
     private Session naoSession;
     private ALAnimatedSpeech naoAnimatedSpeech;
     private ALMotion naoMotion;
@@ -137,6 +176,10 @@ public class NaoRemoteControlApplication extends Application
         else if(command.first.equals("ALRobotPosture"))
         {
             naoPosture.goToPosture(command.second[0], Float.parseFloat(command.second[1])/100.0f);
+        }
+        else if(command.first.equals("ALMotion"))
+        {
+            naoMotion.moveTo(Float.parseFloat(command.second[0]), Float.parseFloat(command.second[1]));
         }
     }
 
