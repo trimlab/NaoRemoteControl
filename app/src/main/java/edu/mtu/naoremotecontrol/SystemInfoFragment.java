@@ -44,11 +44,16 @@ public class SystemInfoFragment extends Fragment
                     {
                         try
                         {
-                            cpu_temperature.setText((new StringBuilder()).append("CPU: ").append(application.getCPUTemperature()).toString());
+                            cpu_temperature.setText((new StringBuilder()).append("CPU Temperature: ")
+                                    .append(application.getCPUTemperature())
+                                    .append(" ")
+                                    .append('\u00B0')
+                                    .append("C").toString());
                             battery_level.setText((new StringBuilder()).
                                     append("Battery Level: ").
                                     append(application.getBatteryLevel()).append("%").toString());
-                        } catch (Exception exception)
+                        }
+                        catch (Exception exception)
                         {
                             exception.printStackTrace();
                         }

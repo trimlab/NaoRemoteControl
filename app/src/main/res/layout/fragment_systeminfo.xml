@@ -4,11 +4,6 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView android:textSize="@dimen/abc_text_size_medium_material"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="@string/label_temperature" />
-
     <TextView android:id="@+id/cpu_temperature"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content" />
