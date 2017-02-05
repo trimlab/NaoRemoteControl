@@ -171,7 +171,7 @@ public class NaoRemoteControlApplication extends Application
     {
         if(command.first.equals("ALAnimatedSpeech"))
         {
-            naoAnimatedSpeech.say(command.second[0]);
+            say(command.second[0]);
         }
         else if(command.first.equals("ALRobotPosture"))
         {
@@ -179,7 +179,7 @@ public class NaoRemoteControlApplication extends Application
         }
         else if(command.first.equals("ALMotion"))
         {
-            naoMotion.moveTo(Float.parseFloat(command.second[0]), Float.parseFloat(command.second[1]));
+            //TODO this
         }
     }
 
@@ -206,5 +206,15 @@ public class NaoRemoteControlApplication extends Application
             throws Exception
     {
         naoAudioDevice.setOutputVolume(Integer.valueOf(i / 100));
+    }
+
+    public void say(String text) throws InterruptedException, CallError
+    {
+        naoAnimatedSpeech.say(text);
+    }
+
+    public void move(WalkDirection direction) throws InterruptedException, CallError
+    {
+        naoMotion.move(direction.getX(), direction.getY(), direction.getTheta());
     }
 }
