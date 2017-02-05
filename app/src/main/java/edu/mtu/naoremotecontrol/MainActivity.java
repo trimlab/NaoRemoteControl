@@ -100,9 +100,11 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void run()
                             {
-                                NaoRemoteControlApplication application = (NaoRemoteControlApplication) getApplication();
-                                application.connect(ipAddress.getText().toString());
-
+                                if(!ipAddress.getText().toString().equals(""))
+                                {
+                                    NaoRemoteControlApplication application = (NaoRemoteControlApplication) getApplication();
+                                    application.connect(ipAddress.getText().toString());
+                                }
                                 dialog.dismiss();
 
                                 runOnUiThread(new Runnable()
