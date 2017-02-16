@@ -30,8 +30,8 @@ public class NaoRemoteControlApplication extends Application
     {
         FORWARD("forward", 0.040f, 0.0f, 0),
         BACKWARD("backward", -0.040f, 0.0f, 0),
-        LEFT("left", 0, 0.140f, (float) (-1 * Math.PI/2.0f)),
-        RIGHT("right", 0, 0.140f, (float) (Math.PI/2.0f));
+        RIGHT("right", 0, 0.140f, (float) (-1 * Math.PI/2.0f)),
+        LEFT("left", 0, 0.140f, (float) (Math.PI/2.0f));
 
         private String toString;
         private float x,y, theta;
@@ -179,7 +179,27 @@ public class NaoRemoteControlApplication extends Application
         }
         else if(command.first.equals("ALMotion"))
         {
-            //TODO this
+            NaoRemoteControlApplication.WalkDirection direction = null;
+
+            if(command.second[0].equals("Forward"))
+            {
+                direction = WalkDirection.FORWARD;
+            }
+            else if(command.second[0].equals("Left"))
+            {
+                direction = WalkDirection.LEFT;
+            }
+            else if(command.second[0].equals("Right"))
+            {
+                direction = WalkDirection.RIGHT;
+            }
+            else if(command.second[0].equals("Backward"))
+            {
+                direction = WalkDirection.BACKWARD;
+            }
+
+            if(direction != null)
+                naoMotion.walkTo(direction.getX(), direction.getY(), direction.getTheta());
         }
     }
 
