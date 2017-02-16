@@ -1,8 +1,6 @@
 package edu.mtu.naoremotecontrol;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
@@ -54,8 +52,8 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
         scriptEditView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
         adapter = new ScriptEditViewAdapter();
         adapter.setInsertListener(insertListener);
-        adapter.setRunListener(menuListener);
-        //adapter.setMenuListener(menuListener);
+        adapter.setRunListener(runListener);
+        adapter.setMenuListener(menuListener);
         scriptEditView.setAdapter(adapter);
 
         ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, ItemTouchHelper.ACTION_STATE_SWIPE)
@@ -102,8 +100,8 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
             }
         };
 
-        ItemTouchHelper helper = new ItemTouchHelper(itemTouchCallback);
-        helper.attachToRecyclerView(scriptEditView);
+        //ItemTouchHelper helper = new ItemTouchHelper(itemTouchCallback);
+        //helper.attachToRecyclerView(scriptEditView);
 
         run = (Button) v.findViewById(R.id.runScript);
         pause = (Button) v.findViewById(R.id.pauseScript);
@@ -254,10 +252,10 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
         }
     };
 
-    private View.OnClickListener menuListener = new View.OnClickListener()
+    private View.OnLongClickListener menuListener = new View.OnLongClickListener()
     {
         @Override
-        public void onClick(final View buttonView)
+        public boolean onLongClick(final View buttonView)
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(buttonView.getContext());
             builder.setItems(new String[]{"Run", "Edit", "Delete"}, new DialogInterface.OnClickListener()
@@ -325,6 +323,8 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
             });
 
             builder.show();
+
+            return true;
         }
     };
 

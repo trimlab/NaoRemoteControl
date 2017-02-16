@@ -9,6 +9,7 @@ import com.aldebaran.qi.helper.proxies.ALAnimatedSpeech;
 import com.aldebaran.qi.helper.proxies.ALAudioDevice;
 import com.aldebaran.qi.helper.proxies.ALAutonomousLife;
 import com.aldebaran.qi.helper.proxies.ALBattery;
+import com.aldebaran.qi.helper.proxies.ALBehaviorManager;
 import com.aldebaran.qi.helper.proxies.ALBodyTemperature;
 import com.aldebaran.qi.helper.proxies.ALMemory;
 import com.aldebaran.qi.helper.proxies.ALMotion;
@@ -77,6 +78,7 @@ public class NaoRemoteControlApplication extends Application
     private ALRobotPosture naoPosture;
     private ALAudioDevice naoAudioDevice;
     private ALMemory naoMemory;
+    private ALBehaviorManager naoBehaviorManager;
 
     public boolean connect(String ip)
     {
@@ -96,6 +98,8 @@ public class NaoRemoteControlApplication extends Application
             naoBattery = new ALBattery(naoSession);
             naoAudioDevice = new ALAudioDevice(naoSession);
             naoMemory = new ALMemory(naoSession);
+
+            naoBehaviorManager = new ALBehaviorManager(naoSession);
 
         }
         catch (Exception e)
@@ -127,6 +131,7 @@ public class NaoRemoteControlApplication extends Application
 
     public List<String> getGestures()
     {
+
         return Arrays.asList(
                 "affirmative", "alright", "beg", "beseech", "body language", "bow", "call", "clear", "enthusiastic", "entreat",
                 "explain", "happy", "hello", "hey", "hi", "I", "implore", "indicate", "me", "my",
