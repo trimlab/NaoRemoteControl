@@ -167,9 +167,19 @@ public class NaoRemoteControlApplication extends Application
         );
     }
 
-    public List getPrograms()
+    public List<String> getPrograms() throws InterruptedException, CallError
     {
-        return null;
+        return naoBehaviorManager.getUserBehaviorNames();
+    }
+
+    public void runProgram(String name) throws InterruptedException, CallError
+    {
+        naoBehaviorManager.runBehavior(name);
+    }
+
+    public void stopProgram(String name) throws InterruptedException, CallError
+    {
+        naoBehaviorManager.stopBehavior(name);
     }
 
     public void runCommand(Pair<String, String[]> command) throws CallError, InterruptedException

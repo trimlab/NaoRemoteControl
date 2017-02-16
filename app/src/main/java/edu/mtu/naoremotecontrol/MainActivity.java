@@ -21,6 +21,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.aldebaran.qi.CallError;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -213,6 +216,19 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
+                       Spinner programList = (Spinner) ((Dialog) dialog).findViewById(R.id.dialog_program_spinner);
+                        try
+                        {
+                            ((NaoRemoteControlApplication) getApplication()).stopProgram(programList.getSelectedItem().toString());
+                        }
+                        catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        catch (CallError callError)
+                        {
+                            callError.printStackTrace();
+                        }
                         dialog.dismiss();
                     }
                 });
@@ -229,22 +245,62 @@ public class MainActivity extends AppCompatActivity
                         programList = (Spinner) ((Dialog) dialog).findViewById(R.id.dialog_program_spinner);
                         container = ((Dialog) dialog).findViewById(R.id.executeDialogProgressContainer);
 
-                        ArrayAdapter<String> programs = new ArrayAdapter<String>(MainActivity.this,
-                                android.R.layout.simple_spinner_dropdown_item,
-                                new String[]{"Tai-Chi", "Custom1"});
+                        try
+                        {
+                            ArrayAdapter<String> programs = new ArrayAdapter<String>(MainActivity.this,
+                                    android.R.layout.simple_spinner_dropdown_item,
+                                    ((NaoRemoteControlApplication) getApplication()).getPrograms());
 
-                        programList.setAdapter(programs);
+                            programList.setAdapter(programs);
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                            Toast.makeText(MainActivity.this, "Error getting list of stored programs.", Toast.LENGTH_LONG).show();
+                        }
 
                         Button run = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
 
                         run.setOnClickListener(new View.OnClickListener()
                         {
+                            private Thread programThread;
                             @Override
-                            public void onClick(View v)
+                            public void onClick(final View v)
                             {
                                 v.setEnabled(false);
                                 programList.setVisibility(View.GONE);
                                 container.setVisibility(View.VISIBLE);
+
+                                new Thread(new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        try
+                                        {
+                                            ((NaoRemoteControlApplication) getApplication()).runProgram(programList.getSelectedItem().toString());
+                                        }
+                                        catch (InterruptedException e)
+                                        {
+                                            e.printStackTrace();
+                                        }
+                                        catch (CallError callError)
+                                        {
+                                            callError.printStackTrace();
+                                        }
+
+                                        runOnUiThread(new Runnable()
+                                        {
+                                            @Override
+                                            public void run()
+                                            {
+                                                v.setEnabled(true);
+                                                programList.setVisibility(View.VISIBLE);
+                                                container.setVisibility(View.GONE);
+                                            }
+                                        });
+                                    }
+                                }).start();
                             }
                         });
                     }
