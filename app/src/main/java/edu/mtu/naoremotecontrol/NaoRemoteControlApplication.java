@@ -223,7 +223,7 @@ public class NaoRemoteControlApplication extends Application
     {
         if (enabled)
         {
-            naoAnimatedSpeech.setBodyLanguageModeFromStr("context");
+            naoAnimatedSpeech.setBodyLanguageModeFromStr("contextual");
         }
         else
         {
