@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity
                        Spinner programList = (Spinner) ((Dialog) dialog).findViewById(R.id.dialog_program_spinner);
                         try
                         {
-                            ((NaoRemoteControlApplication) getApplication()).stopProgram(programList.getSelectedItem().toString());
+                            ((NaoRemoteControlApplication) getApplication()).stopBehavior(programList.getSelectedItem().toString());
                         }
                         catch (InterruptedException e)
                         {
@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity
                         {
                             ArrayAdapter<String> programs = new ArrayAdapter<String>(MainActivity.this,
                                     android.R.layout.simple_spinner_dropdown_item,
-                                    ((NaoRemoteControlApplication) getApplication()).getPrograms());
+                                    ((NaoRemoteControlApplication) getApplication()).getBehaviors());
 
                             programList.setAdapter(programs);
                         }
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity
                                     {
                                         try
                                         {
-                                            ((NaoRemoteControlApplication) getApplication()).runProgram(programList.getSelectedItem().toString());
+                                            ((NaoRemoteControlApplication) getApplication()).runBehavior(programList.getSelectedItem().toString());
                                         }
                                         catch (InterruptedException e)
                                         {
