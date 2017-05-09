@@ -30,6 +30,8 @@ public class BehaviorActionDialogFragment extends ActionDialogChildFragment
         {
             behaviorSpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,
                     ((NaoRemoteControlApplication) getActivity().getApplication()).getBehaviors());
+
+            behaviorSpinner.setAdapter(behaviorSpinnerAdapter);
         }
         catch (Exception e)
         {

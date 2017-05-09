@@ -98,11 +98,10 @@ public class ActionDialogFragment extends DialogFragment
             String rate = null;
 
 
-            if(type.equals("Pose") || type.equals("Gesture"))
+            if(type.equals("Pose"))
             {
                 String[] split = data.split("/");
                 value = split[0].trim();
-                rate = split[1].trim();
             }
             else
                 value = data.trim();
