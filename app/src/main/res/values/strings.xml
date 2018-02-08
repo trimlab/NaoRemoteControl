@@ -27,6 +27,7 @@
     <string name="action_dialog_text_label">Text to Say</string>
     <string name="action_dialog_volume_label">Volume</string>
     <string name="action_dialog_walk_label">Walking</string>
+    <string name="action_dialog_behavior_label">Behavior</string>
     <string name="action_dialog_gesture_concurrent_label">Concurrent Execution?</string>
     <string name="settings_contact_title">Contact</string>
     <string name="settings_about_title">About</string>

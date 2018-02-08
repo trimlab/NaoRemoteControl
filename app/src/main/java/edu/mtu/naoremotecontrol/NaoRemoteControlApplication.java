@@ -167,17 +167,17 @@ public class NaoRemoteControlApplication extends Application
         );
     }
 
-    public List<String> getPrograms() throws InterruptedException, CallError
+    public List<String> getBehaviors() throws InterruptedException, CallError
     {
         return naoBehaviorManager.getUserBehaviorNames();
     }
 
-    public void runProgram(String name) throws InterruptedException, CallError
+    public void runBehavior(String name) throws InterruptedException, CallError
     {
         naoBehaviorManager.runBehavior(name);
     }
 
-    public void stopProgram(String name) throws InterruptedException, CallError
+    public void stopBehavior(String name) throws InterruptedException, CallError
     {
         naoBehaviorManager.stopBehavior(name);
     }
@@ -215,6 +215,10 @@ public class NaoRemoteControlApplication extends Application
 
             if(direction != null)
                 naoMotion.walkTo(direction.getX(), direction.getY(), direction.getTheta());
+        }
+        else if(command.first.equals("ALBehaviorManager"))
+        {
+            naoBehaviorManager.runBehavior(command.second[0]);
         }
     }
 

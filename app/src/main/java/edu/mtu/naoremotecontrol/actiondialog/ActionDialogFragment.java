@@ -37,7 +37,7 @@ public class ActionDialogFragment extends DialogFragment
 
         TabLayout tabLayout = (TabLayout) v.findViewById(R.id.dialogActionTabLayout);
         viewPager = (DialogViewPager) v.findViewById(R.id.dialogActionViewPager);
-        viewPager.setOffscreenPageLimit(7);
+        viewPager.setOffscreenPageLimit(8);
         adapter = new ActionDialogPagerAdapter(getChildFragmentManager(),
                 new Fragment[]{ new TextActionDialogFragment(),
                         new PitchActionDialogFragment(),
@@ -45,7 +45,8 @@ public class ActionDialogFragment extends DialogFragment
                         new RateActionDialogFragment(),
                         new PoseActionDialogFragment(),
                         new WalkActionDialogFragment(),
-                        new GestureActionDialogFragment()});
+                        new GestureActionDialogFragment(),
+                        new BehaviorActionDialogFragment()});
 
         viewPager.setAdapter(adapter);
 
@@ -97,11 +98,10 @@ public class ActionDialogFragment extends DialogFragment
             String rate = null;
 
 
-            if(type.equals("Pose") || type.equals("Gesture"))
+            if(type.equals("Pose"))
             {
                 String[] split = data.split("/");
                 value = split[0].trim();
-                rate = split[1].trim();
             }
             else
                 value = data.trim();
@@ -149,6 +149,12 @@ public class ActionDialogFragment extends DialogFragment
                 ActionDialogChildFragment fragment = (ActionDialogChildFragment) adapter.getItem(6);
                 fragment.setData(value, rate);
             }
+            else if(type.equals("Behavior"))
+            {
+                viewPager.setCurrentItem(7);
+                ActionDialogChildFragment fragment = (ActionDialogChildFragment) adapter.getItem(7);
+                fragment.setData(value);
+            }
         }
     }
 
@@ -159,7 +165,7 @@ public class ActionDialogFragment extends DialogFragment
 
     private static class ActionDialogPagerAdapter extends FragmentPagerAdapter
     {
-        private final String[] FRAGMENT_TITLES = {"Text","Pitch","Volume","Rate","Pose","Walk","Gesture"};
+        private final String[] FRAGMENT_TITLES = {"Text","Pitch","Volume","Rate","Pose","Walk","Gesture","Behavior"};
         private Fragment[] fragments;
         private ActionDialogPagerAdapter(FragmentManager fm, Fragment[] fragments)
         {

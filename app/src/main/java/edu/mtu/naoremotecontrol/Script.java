@@ -222,6 +222,10 @@ public class Script
             {
                 converted.add(new Pair<>("ALRobotPosture", new String[]{value, rate}));
             }
+            else if(type.equals("Behavior"))
+            {
+                converted.add(new Pair<>("ALBehaviorManager", new String[]{value}));
+            }
 
             List<Pair<String, String[]>> result = converted;
 
