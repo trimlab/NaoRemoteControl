@@ -2,6 +2,7 @@ package edu.mtu.naoremotecontrol;
 
 import android.app.Application;
 import android.support.v4.util.Pair;
+import android.util.Log;
 
 import com.aldebaran.qi.CallError;
 import com.aldebaran.qi.Session;
@@ -43,6 +44,10 @@ public class NaoRemoteControlApplication extends Application
     {
         try
         {
+            Log.d("build", getApplicationContext().getApplicationInfo().nativeLibraryDir);
+            System.loadLibrary("gnustl_shared");
+            System.loadLibrary("qi");
+            System.loadLibrary("qimessagingjni");
             naoSession = new Session(ip);
 
             naoAnimatedSpeech = new ALAnimatedSpeech(naoSession);
