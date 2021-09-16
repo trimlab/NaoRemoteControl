@@ -1,14 +1,14 @@
 package edu.mtu.naoremotecontrol;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +56,53 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
         adapter.setMenuListener(menuListener);
         scriptEditView.setAdapter(adapter);
 
+        ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, ItemTouchHelper.ACTION_STATE_SWIPE)
+        {
+            @Override
+            public int getDragDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder)
+            {
+                ScriptEditViewAdapter.ButtonViewHolder buttonViewHolder = (ScriptEditViewAdapter.ButtonViewHolder) viewHolder;
+
+                if(buttonViewHolder.isInsertButton())
+                    return 0;
+
+                return super.getDragDirs(recyclerView,viewHolder);
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target)
+            {
+                final int from = viewHolder.getAdapterPosition();
+                final int to;
+
+                if(((ScriptEditViewAdapter.ButtonViewHolder) viewHolder).isInsertButton())
+                    return false;
+
+                if(target.getAdapterPosition() == adapter.getItemCount()-1)
+                    to = target.getAdapterPosition()-1;
+                else
+                    to = target.getAdapterPosition();
+
+                ScriptEditViewAdapter adapter = (ScriptEditViewAdapter) recyclerView.getAdapter();
+
+                Collections.swap(adapter.getScript(), from, to);
+                adapter.notifyItemMoved(from, to);
+
+                Log.d("Moved", "Moved");
+
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction)
+            {
+
+            }
+        };
+
+        //ItemTouchHelper helper = new ItemTouchHelper(itemTouchCallback);
+        //helper.attachToRecyclerView(scriptEditView);
+
         run = (Button) v.findViewById(R.id.runScript);
         pause = (Button) v.findViewById(R.id.pauseScript);
         stop = (Button)v.findViewById(R.id.stopScript);
@@ -77,13 +124,6 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
                         for(int i = 0; i < naoScript.size(); i++)
                         {
                             Pair<String, String[]> action = naoScript.get(i);
-                            View current = scriptEditView.getChildAt(i);
-
-                            if(i != 0)
-                            {
-                                scriptEditView.getChildAt(i-1).getBackground().clearColorFilter();
-                            }
-                            current.getBackground().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
 
                             try
                             {
@@ -201,13 +241,13 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
             {
                 application.runCommand(commandPair);
             }
-            catch (CallError callError)
-            {
-                callError.printStackTrace();
-            }
             catch (InterruptedException e)
             {
                 e.printStackTrace();
+            }
+            catch (CallError callError)
+            {
+                callError.printStackTrace();
             }
         }
     };
@@ -234,13 +274,13 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
                         {
                             application.runCommand(commandPair);
                         }
-                        catch (CallError callError)
-                        {
-                            callError.printStackTrace();
-                        }
                         catch (InterruptedException e)
                         {
                             e.printStackTrace();
+                        }
+                        catch (CallError callError)
+                        {
+                            callError.printStackTrace();
                         }
                     }
                     else if(which == 1)
@@ -284,7 +324,7 @@ public class RemoteControlFragment extends Fragment implements RadioGroup.OnChec
 
             builder.show();
 
-            return false;
+            return true;
         }
     };
 

@@ -38,7 +38,7 @@ public class ScriptEditViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         menuListener = listener;
     }
 
-    private class ButtonViewHolder extends RecyclerView.ViewHolder implements Button.OnClickListener
+    public class ButtonViewHolder extends RecyclerView.ViewHolder implements Button.OnClickListener
     {
         public Button view;
         private String text;

@@ -214,9 +214,17 @@ public class Script
 
                 Log.d("Gesture", value);
             }
+            else if(type.equals("Walk"))
+            {
+                converted.add(new Pair<String, String[]>("ALMotion", new String[]{value}));
+            }
             else if(type.equals("Pose"))
             {
                 converted.add(new Pair<>("ALRobotPosture", new String[]{value, rate}));
+            }
+            else if(type.equals("Behavior"))
+            {
+                converted.add(new Pair<>("ALBehaviorManager", new String[]{value}));
             }
 
             List<Pair<String, String[]>> result = converted;

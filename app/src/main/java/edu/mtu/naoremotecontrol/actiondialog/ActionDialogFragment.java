@@ -37,14 +37,16 @@ public class ActionDialogFragment extends DialogFragment
 
         TabLayout tabLayout = (TabLayout) v.findViewById(R.id.dialogActionTabLayout);
         viewPager = (DialogViewPager) v.findViewById(R.id.dialogActionViewPager);
-        viewPager.setOffscreenPageLimit(6);
+        viewPager.setOffscreenPageLimit(8);
         adapter = new ActionDialogPagerAdapter(getChildFragmentManager(),
                 new Fragment[]{ new TextActionDialogFragment(),
                         new PitchActionDialogFragment(),
                         new VolumeActionDialogFragment(),
                         new RateActionDialogFragment(),
                         new PoseActionDialogFragment(),
-                        new GestureActionDialogFragment()});
+                        new WalkActionDialogFragment(),
+                        new GestureActionDialogFragment(),
+                        new BehaviorActionDialogFragment()});
 
         viewPager.setAdapter(adapter);
 
@@ -96,11 +98,10 @@ public class ActionDialogFragment extends DialogFragment
             String rate = null;
 
 
-            if(type.equals("Pose") || type.equals("Gesture"))
+            if(type.equals("Pose"))
             {
                 String[] split = data.split("/");
                 value = split[0].trim();
-                rate = split[1].trim();
             }
             else
                 value = data.trim();
@@ -136,11 +137,23 @@ public class ActionDialogFragment extends DialogFragment
                 ActionDialogChildFragment fragment = (ActionDialogChildFragment) adapter.getItem(4);
                 fragment.setData(value, rate);
             }
-            else if(type.equals("Gesture"))
+            else if(type.equals("Walk"))
             {
                 viewPager.setCurrentItem(5);
                 ActionDialogChildFragment fragment = (ActionDialogChildFragment) adapter.getItem(5);
+                fragment.setData(value);
+            }
+            else if(type.equals("Gesture"))
+            {
+                viewPager.setCurrentItem(6);
+                ActionDialogChildFragment fragment = (ActionDialogChildFragment) adapter.getItem(6);
                 fragment.setData(value, rate);
+            }
+            else if(type.equals("Behavior"))
+            {
+                viewPager.setCurrentItem(7);
+                ActionDialogChildFragment fragment = (ActionDialogChildFragment) adapter.getItem(7);
+                fragment.setData(value);
             }
         }
     }
@@ -152,7 +165,7 @@ public class ActionDialogFragment extends DialogFragment
 
     private static class ActionDialogPagerAdapter extends FragmentPagerAdapter
     {
-        private final String[] FRAGMENT_TITLES = {"Text","Pitch","Volume","Rate","Pose","Gesture"};
+        private final String[] FRAGMENT_TITLES = {"Text","Pitch","Volume","Rate","Pose","Walk","Gesture","Behavior"};
         private Fragment[] fragments;
         private ActionDialogPagerAdapter(FragmentManager fm, Fragment[] fragments)
         {

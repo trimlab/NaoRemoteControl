@@ -30,37 +30,10 @@ public class GestureActionDialogFragment extends ActionDialogChildFragment
 
         gestureSpinner.setAdapter(gestureAdapter);
 
-        gestureSpeedLevel = (SeekBar) v.findViewById(R.id.action_dialog_gesturespeed_value);
-        gestureSpeedLevelView = (TextView) v.findViewById(R.id.action_dialog_gesturespeed_value_display);
-
-        gestureSpeedLevelView.setText(String.valueOf(gestureSpeedLevel.getProgress()+50));
-
-        gestureSpeedLevel.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
-        {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
-            {
-                gestureSpeedLevelView.setText(String.valueOf(progress+50));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar)
-            {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar)
-            {
-
-            }
-        });
 
         if(inputData != null)
         {
             gestureSpinner.setSelection(gestureAdapter.getPosition(inputData[0]));
-            gestureSpeedLevel.setProgress(Integer.parseInt(inputData[1]));
-            gestureSpeedLevelView.setText(inputData[1]);
         }
 
         return v;
